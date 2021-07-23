@@ -20,7 +20,7 @@ namespace MetricsManager.Controllers
         public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
         {
             _logger.LogInformation("GetMetricsFromAgent: agentId = {0}, fromTime = {1}, toTime = {2}", agentId, fromTime, toTime);
-            return Ok();
+            return Ok();            
         }
 
         [HttpGet("cluster/from/{fromTime}/to/{toTime}")]
