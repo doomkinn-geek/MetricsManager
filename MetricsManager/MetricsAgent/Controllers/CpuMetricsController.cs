@@ -10,7 +10,7 @@ namespace MetricsAgent.Controllers
     {
         public CpuMetricsController()
         {
-            int i = 0;
+            
         }
         [HttpGet("sql-test")]
         public IActionResult TryToSqlLite()

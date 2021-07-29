@@ -11,7 +11,7 @@ namespace MetricsManagerTests
 
         public RamMetricsControllerUnitTests()
         {
-            controller = new RamMetricsController();
+            controller = new RamMetricsController(null);
         }
 
         [Fact]

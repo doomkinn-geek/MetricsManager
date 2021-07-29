@@ -11,7 +11,7 @@ namespace MetricsManagerTests
 
         public DotNetMetricsControllerUnitTests()
         {
-            controller = new DotNetMetricsController();
+            controller = new DotNetMetricsController(null);
         }
 
         [Fact]

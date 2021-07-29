@@ -12,7 +12,7 @@ namespace MetricsManagerTests
 
         public AgentsControllerUnitTests()
         {
-            controller = new AgentsController();
+            controller = new AgentsController(null);
         }
 
         [Fact]
