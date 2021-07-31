@@ -1,5 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MetricsAgent.DAL;
+using MetricsAgent.Requests;
+using MetricsAgent.Responses;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
 using System.Data.SQLite;
 
 namespace MetricsAgent.Controllers
@@ -8,10 +13,42 @@ namespace MetricsAgent.Controllers
     [ApiController]
     public class CpuMetricsController : ControllerBase
     {
-        public CpuMetricsController()
+        private ICpuMetricsRepository repository;
+        public CpuMetricsController(ICpuMetricsRepository repository)
         {
-            
+            this.repository = repository;
         }
+
+        [HttpPost("create")]
+        public IActionResult Create([FromBody] CpuMetricCreateRequest request)
+        {
+            repository.Create(new CpuMetric
+            {
+                Time = request.Time,
+                Value = request.Value
+            });
+
+            return Ok();
+        }
+
+        [HttpGet("all")]
+        public IActionResult GetAll()
+        {
+            var metrics = repository.GetAll();
+
+            var response = new AllCpuMetricsResponse()
+            {
+                Metrics = new List<CpuMetricDto>()
+            };
+
+            foreach (var metric in metrics)
+            {
+                response.Metrics.Add(new CpuMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+            }
+
+            return Ok(response);
+        }
+
         [HttpGet("sql-test")]
         public IActionResult TryToSqlLite()
         {
@@ -52,7 +89,7 @@ namespace MetricsAgent.Controllers
 
                     // создаем таблицу с метриками
                     command.CommandText = @"CREATE TABLE cpumetrics(id INTEGER PRIMARY KEY,
-                    value INT, time INT)";
+                value INT, time INT)";
                     command.ExecuteNonQuery();
 
                     // создаем запрос на вставку данных
@@ -87,7 +124,7 @@ namespace MetricsAgent.Controllers
                             {
                                 Id = reader.GetInt32(0), // читаем данные полученные из базы данных
                                 Value = reader.GetInt32(1), // преобразуя к целочисленному типу
-                                Time = reader.GetInt64(2)
+                                Time = TimeSpan.FromSeconds(reader.GetInt32(2))
                             };
                             // увеличиваем значение счетчика
                             counter++;
@@ -98,7 +135,5 @@ namespace MetricsAgent.Controllers
                 }
             }
         }
-
-
     }
 }
