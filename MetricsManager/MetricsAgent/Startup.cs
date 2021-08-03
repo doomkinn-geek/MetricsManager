@@ -37,7 +37,7 @@ namespace MetricsAgent
             const string connectionString = "Data Source=metrics.db;Version=3;Pooling=true;Max Pool Size=100;";
             var connection = new SQLiteConnection(connectionString);
             connection.Open();
-            PrepareSchema(connection);
+            //PrepareSchema(connection);
         }
 
         private void PrepareSchema(SQLiteConnection connection)
