@@ -1,4 +1,5 @@
 ﻿using MetricsAgent.Controllers;
+using MetricsAgent.DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -10,38 +11,35 @@ namespace MetricsManagerTests
     public class DotNetMetricsControllerUnitTests
     {
         private DotNetMetricsController controller;
-        private Mock<ILogger<DotNetMetricsController>> mock;
+        private Mock<DotNetMetricsRepository> mock;
 
         public DotNetMetricsControllerUnitTests()
         {
-            mock = new Mock<ILogger<DotNetMetricsController>>();
+            mock = new Mock<DotNetMetricsRepository>();
             controller = new DotNetMetricsController(mock.Object);
         }
 
         [Fact]
-        public void GetMetricsFromAgent_ReturnsOk()
+        public void GetByTimePeriod_ReturnsOk()
         {
             //Arrange
-            var agentId = 1;
             var fromTime = TimeSpan.FromSeconds(0);
             var toTime = TimeSpan.FromSeconds(100);
 
             //Act
-            var result = controller.GetMetricsFromAgent(agentId, fromTime, toTime);
+            var result = controller.GetByTimePeriod(fromTime, toTime);
 
             // Assert
             _ = Assert.IsAssignableFrom<IActionResult>(result);
         }
 
         [Fact]
-        public void GetMetricsFromAllCluster_ReturnsOk()
+        public void GetAll_ReturnsOk()
         {
             //Arrange            
-            var fromTime = TimeSpan.FromSeconds(0);
-            var toTime = TimeSpan.FromSeconds(100);
-
+            
             //Act
-            var result = controller.GetMetricsFromAllCluster(fromTime, toTime);
+            var result = controller.GetAll();
 
             // Assert
             _ = Assert.IsAssignableFrom<IActionResult>(result);

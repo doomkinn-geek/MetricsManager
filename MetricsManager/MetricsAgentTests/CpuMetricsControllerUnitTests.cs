@@ -26,7 +26,7 @@ namespace MetricsManagerTests
         public void Create_ShouldCall_Create_From_Repository()
         {
             // устанавливаем параметр заглушки
-            // в заглушке прописываем что в репозиторий прилетит CpuMetric объект
+            // в заглушке прописываем что в репозиторий прилетит MetricContainer объект
             mock.Setup(repository => repository.Create(It.IsAny<MetricContainer>())).Verifiable();
 
             // выполняем действие на контроллере
