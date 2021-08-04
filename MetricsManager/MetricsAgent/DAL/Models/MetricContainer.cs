@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace MetricsAgent
+namespace MetricsAgent.DAL.Models
 {
-    public class DotNetMetric
+    public class MetricContainer
     {
         public int Id { get; set; }
         public int Value { get; set; }

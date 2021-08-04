@@ -1,16 +1,16 @@
-﻿using System;
+﻿using MetricsAgent.DAL.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MetricsAgent.DAL
+namespace MetricsAgent.DAL.Interfaces
 {
-    public interface IRepository<T> where T : class
+    public interface IRepository<T>
     {
         IList<T> GetAll();
 
         T GetById(int id);
-        IList<T> GetByTimePeriod(TimeSpan fromTime, TimeSpan toTime);
 
         void Create(T item);
 

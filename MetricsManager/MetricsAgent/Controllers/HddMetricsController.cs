@@ -1,33 +1,93 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MetricsAgent.DAL;
+using MetricsAgent.DAL.Models;
+using MetricsAgent.Requests;
+using MetricsAgent.Responses;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-
+using System.Collections.Generic;
 
 namespace MetricsAgent.Controllers
 {
-    [Route("api/metrics/hdd/left")]
+    [Route("api/[controller]")]
     [ApiController]
     public class HddMetricsController : ControllerBase
     {
-        private readonly ILogger<HddMetricsController> _logger;
-        public HddMetricsController(ILogger<HddMetricsController> logger)
+        private HddMetricsRepository repository;
+        public HddMetricsController(HddMetricsRepository repository)
         {
-            _logger = logger;
-            _logger.LogDebug(1, "NLog встроен в DotNetMetricsController");
+            this.repository = repository;
         }
 
-        [HttpGet("agent/{agentId}/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        [HttpPost("create")]
+        public IActionResult Create([FromBody] MetricCreateRequest request)
         {
-            _logger.LogInformation("GetMetricsFromAgent: agentId = {0}, fromTime = {1}, toTime = {2}", agentId, fromTime, toTime);
+            repository.Create(new MetricContainer
+            {
+                Time = request.Time,
+                Value = request.Value
+            });
+
+            return Ok();
+        }
+        [HttpDelete("delete")]
+        public IActionResult Delete([FromQuery] int id)
+        {
+            repository.Delete(id);
+            return Ok();
+        }
+        [HttpPut("update")]
+        public IActionResult Update([FromBody] MetricContainer request)
+        {
+            repository.Update(new MetricContainer
+            {
+                Id = request.Id,
+                Time = request.Time,
+                Value = request.Value
+            });
             return Ok();
         }
 
-        [HttpGet("cluster/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAllCluster([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        [HttpGet("all")]
+        public IActionResult GetAll()
         {
-            _logger.LogInformation("GetMetricsFromAllCluster: fromTime = {1}, toTime = {2}", fromTime, toTime);
-            return Ok();
+            var metrics = repository.GetAll();
+
+            var response = new AllMetricsResponse()
+            {
+                Metrics = new List<MetricContainer>()
+            };
+
+            foreach (var metric in metrics)
+            {
+                response.Metrics.Add(new MetricContainer { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+            }
+
+            return Ok(response);
+        }
+
+        [HttpGet("byId")]
+        public IActionResult GetById([FromQuery] int id)
+        {
+            return Ok(repository.GetById(id));
+        }
+
+        [HttpGet("timePeriod")]
+        public IActionResult GetByTimePeriod([FromQuery] TimeSpan fromTime, TimeSpan toTime)
+        {
+            var metrics = repository.GetByTimePeriod(fromTime, toTime);
+
+            var response = new AllMetricsResponse()
+            {
+                Metrics = new List<MetricContainer>()
+            };
+
+            foreach (var metric in metrics)
+            {
+                response.Metrics.Add(new MetricContainer { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+            }
+
+            return Ok(response);
         }
     }
 }

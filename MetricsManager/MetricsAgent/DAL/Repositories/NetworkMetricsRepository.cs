@@ -11,11 +11,10 @@ using System.Threading.Tasks;
 namespace MetricsAgent.DAL
 {
 
-    public class CpuMetricsRepository : IRepository<MetricContainer>
+    public class NetworkMetricsRepository : IRepository<MetricContainer>
     {
-        private const string tableName = "cpumetrics";
-
-        public CpuMetricsRepository()
+        private const string tableName = "networkmetrics";
+        public NetworkMetricsRepository()
         {
             // добавляем парсилку типа TimeSpan в качестве подсказки для SQLite
             SqlMapper.AddTypeHandler(new TimeSpanHandler());

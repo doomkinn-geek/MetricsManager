@@ -1,4 +1,5 @@
 ﻿using MetricsAgent.DAL;
+using MetricsAgent.DAL.Models;
 using MetricsAgent.Requests;
 using MetricsAgent.Responses;
 using Microsoft.AspNetCore.Http;
@@ -13,21 +14,38 @@ namespace MetricsAgent.Controllers
     [ApiController]
     public class CpuMetricsController : ControllerBase
     {
-        private ICpuMetricsRepository repository;
-        public CpuMetricsController(ICpuMetricsRepository repository)
+        private CpuMetricsRepository repository;
+        public CpuMetricsController(CpuMetricsRepository repository)
         {
             this.repository = repository;
         }
 
         [HttpPost("create")]
-        public IActionResult Create([FromBody] CpuMetricCreateRequest request)
+        public IActionResult Create([FromBody] MetricCreateRequest request)
         {
-            repository.Create(new CpuMetric
+            repository.Create(new MetricContainer
             {
                 Time = request.Time,
                 Value = request.Value
             });
 
+            return Ok();
+        }
+        [HttpDelete("delete")]
+        public IActionResult Delete([FromQuery] int id)
+        {
+            repository.Delete(id);
+            return Ok();
+        }
+        [HttpPut("update")]
+        public IActionResult Update([FromBody] MetricContainer request)
+        {
+            repository.Update(new MetricContainer
+            {
+                Id = request.Id,
+                Time = request.Time,
+                Value = request.Value
+            });
             return Ok();
         }
 
@@ -36,14 +54,38 @@ namespace MetricsAgent.Controllers
         {
             var metrics = repository.GetAll();
 
-            var response = new AllCpuMetricsResponse()
+            var response = new AllMetricsResponse()
             {
-                Metrics = new List<CpuMetricDto>()
+                Metrics = new List<MetricContainer>()
             };
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(new CpuMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                response.Metrics.Add(new MetricContainer { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+            }
+
+            return Ok(response);
+        }
+
+        [HttpGet("byId")]
+        public IActionResult GetById([FromQuery] int id)
+        {
+            return Ok(repository.GetById(id));
+        }
+
+        [HttpGet("timePeriod")]
+        public IActionResult GetByTimePeriod([FromQuery] TimeSpan fromTime, TimeSpan toTime)
+        {
+            var metrics = repository.GetByTimePeriod(fromTime, toTime);
+
+            var response = new AllMetricsResponse()
+            {
+                Metrics = new List<MetricContainer>()
+            };
+
+            foreach (var metric in metrics)
+            {
+                response.Metrics.Add(new MetricContainer { Time = metric.Time, Value = metric.Value, Id = metric.Id });
             }
 
             return Ok(response);
@@ -107,7 +149,7 @@ namespace MetricsAgent.Controllers
                     string readQuery = "SELECT * FROM cpumetrics LIMIT 3";
 
                     // создаем массив, в который запишем объекты с данными из базы данных
-                    var returnArray = new CpuMetric[3];
+                    var returnArray = new MetricContainer[3];
                     // изменяем текст команды на наш запрос чтения
                     command.CommandText = readQuery;
 
@@ -120,7 +162,7 @@ namespace MetricsAgent.Controllers
                         while (reader.Read())
                         {
                             // создаем объект и записываем его в массив
-                            returnArray[counter] = new CpuMetric
+                            returnArray[counter] = new MetricContainer
                             {
                                 Id = reader.GetInt32(0), // читаем данные полученные из базы данных
                                 Value = reader.GetInt32(1), // преобразуя к целочисленному типу
