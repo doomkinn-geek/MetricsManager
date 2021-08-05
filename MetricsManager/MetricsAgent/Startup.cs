@@ -1,5 +1,7 @@
+using AutoMapper;
+using Core;
+using Core.Interfaces;
 using MetricsAgent.DAL;
-using MetricsAgent.DAL.Interfaces;
 using MetricsAgent.DAL.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -36,6 +38,11 @@ namespace MetricsAgent
             services.AddSingleton<HddMetricsRepository>();
             services.AddSingleton<NetworkMetricsRepository>();
             services.AddSingleton<RamMetricsRepository>();
+            services.AddTransient<INotifier, Notifier1>();
+
+            var mapperConfiguration = new MapperConfiguration(mp => mp.AddProfile(new MapperProfile()));
+            var mapper = mapperConfiguration.CreateMapper();
+            services.AddSingleton(mapper);
         }
 
         private void ConfigureSqlLiteConnection(IServiceCollection services)

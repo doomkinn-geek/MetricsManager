@@ -8,7 +8,7 @@ namespace MetricsAgent.Responses
 {
     public class AllMetricsResponse
     {
-        public List<MetricContainer> Metrics { get; set; }
+        public List<MetricDto> Metrics { get; set; }
     }
 
 }

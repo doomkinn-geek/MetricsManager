@@ -1,5 +1,5 @@
-﻿using Dapper;
-using MetricsAgent.DAL.Interfaces;
+﻿using Core;
+using Dapper;
 using MetricsAgent.DAL.Models;
 using MetricsAgent.DAL.Repositories;
 using System;
