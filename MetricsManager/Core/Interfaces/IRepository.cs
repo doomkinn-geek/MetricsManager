@@ -1,10 +1,9 @@
-﻿using MetricsAgent.DAL.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MetricsAgent.DAL.Interfaces
+namespace Core
 {
     public interface IRepository<T>
     {

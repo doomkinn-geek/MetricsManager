@@ -1,4 +1,5 @@
-﻿using MetricsAgent.DAL;
+﻿using AutoMapper;
+using MetricsAgent.DAL;
 using MetricsAgent.DAL.Models;
 using MetricsAgent.Requests;
 using MetricsAgent.Responses;
@@ -14,9 +15,11 @@ namespace MetricsAgent.Controllers
     public class NetworkMetricsController : ControllerBase
     {
         private NetworkMetricsRepository repository;
-        public NetworkMetricsController(NetworkMetricsRepository repository)
+        private readonly IMapper mapper;
+        public NetworkMetricsController(NetworkMetricsRepository repository, IMapper mapper)
         {
             this.repository = repository;
+            this.mapper = mapper;
         }
 
         [HttpPost("create")]
@@ -55,12 +58,12 @@ namespace MetricsAgent.Controllers
 
             var response = new AllMetricsResponse()
             {
-                Metrics = new List<MetricContainer>()
+                Metrics = new List<MetricDto>()
             };
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(new MetricContainer { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                response.Metrics.Add(mapper.Map<MetricDto>(metric));
             }
 
             return Ok(response);
@@ -79,12 +82,12 @@ namespace MetricsAgent.Controllers
 
             var response = new AllMetricsResponse()
             {
-                Metrics = new List<MetricContainer>()
+                Metrics = new List<MetricDto>()
             };
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(new MetricContainer { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                response.Metrics.Add(mapper.Map<MetricDto>(metric));
             }
 
             return Ok(response);
