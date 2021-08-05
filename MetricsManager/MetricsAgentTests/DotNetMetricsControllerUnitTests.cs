@@ -16,7 +16,7 @@ namespace MetricsManagerTests
         public DotNetMetricsControllerUnitTests()
         {
             mock = new Mock<DotNetMetricsRepository>();
-            controller = new DotNetMetricsController(mock.Object);
+            controller = new DotNetMetricsController(mock.Object, null);
         }
 
         [Fact]

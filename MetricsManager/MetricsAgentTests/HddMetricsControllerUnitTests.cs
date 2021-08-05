@@ -16,7 +16,7 @@ namespace MetricsManagerTests
         public HddMetricsControllerUnitTests()
         {
             mock = new Mock<HddMetricsRepository>();
-            controller = new HddMetricsController(mock.Object);
+            controller = new HddMetricsController(mock.Object, null);
         }
 
         [Fact]

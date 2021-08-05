@@ -1,7 +1,6 @@
 using MetricsAgent;
 using MetricsAgent.Controllers;
 using MetricsAgent.DAL;
-using MetricsAgent.DAL.Interfaces;
 using MetricsAgent.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -19,7 +18,7 @@ namespace MetricsManagerTests
         public CpuMetricsControllerUnitTests()
         {
             mock = new Mock<CpuMetricsRepository>();
-            controller = new CpuMetricsController(mock.Object);
+            controller = new CpuMetricsController(mock.Object, null);
         }
 
         [Fact]

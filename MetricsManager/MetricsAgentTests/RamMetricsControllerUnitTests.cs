@@ -16,7 +16,7 @@ namespace MetricsManagerTests
         public RamMetricsControllerUnitTests()
         {
             mock = new Mock<RamMetricsRepository>();
-            controller = new RamMetricsController(mock.Object);
+            controller = new RamMetricsController(mock.Object, null);
         }
 
         [Fact]

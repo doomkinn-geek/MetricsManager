@@ -16,7 +16,7 @@ namespace MetricsManagerTests
         public NetworkMetricsControllerUnitTests()
         {
             mock = new Mock<NetworkMetricsRepository>();
-            controller = new NetworkMetricsController(mock.Object);
+            controller = new NetworkMetricsController(mock.Object, null);
         }
 
         [Fact]
