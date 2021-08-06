@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Diagnostics;
 
 namespace MetricsAgent.Controllers
 {
@@ -109,9 +110,48 @@ namespace MetricsAgent.Controllers
                 using var cmd = new SQLiteCommand(stm, con);
                 string version = cmd.ExecuteScalar().ToString();
 
-                return Ok(version);
+                //return Ok(version);
             }
+
+            List<string> strs = new List<string>();
+            try
+            {
+                foreach (var pc in System.Diagnostics.PerformanceCounterCategory.GetCategories())
+                {
+                    if (pc.CategoryName == "PhysicalDisk" || pc.CategoryName == "Paging File" || pc.CategoryName == "ProcessorPerformance")
+                    {
+                        try
+                        {
+                            foreach (var insta in pc.GetInstanceNames())
+                            {
+                                try
+                                {
+                                    foreach (PerformanceCounter cntr in pc.GetCounters(insta))
+                                    {
+                                        using (System.IO.StreamWriter sw = new System.IO.StreamWriter("C:\\amit.txt", true))
+                                        {
+                                            strs.Add("--------------------------------------------------------------------");
+                                            strs.Add("Category Name : " + pc.CategoryName);
+                                            strs.Add("Counter Name : " + cntr.CounterName);
+                                            strs.Add("Explain Text : " + cntr.CounterHelp);
+                                            strs.Add("Instance Name: " + cntr.InstanceName);
+                                            strs.Add("Value : " + Convert.ToString(cntr.RawValue));  //TODO:
+                                            strs.Add("Counter Type : " + cntr.CounterType);
+                                            strs.Add("--------------------------------------------------------------------");
+                                        }
+                                    }
+                                }
+                                catch (Exception) { }
+                            }
+                        }
+                        catch (Exception) { }
+                    }
+                }
+            }
+            catch (Exception) { }
+            return Ok(strs);
         }
+         
         [HttpGet("sql-read-write-test")]
         public IActionResult TryToInsertAndRead()
         {
