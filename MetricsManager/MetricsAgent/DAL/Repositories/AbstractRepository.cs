@@ -17,7 +17,9 @@ namespace MetricsAgent.DAL.Repositories
             using (var connection = new SQLiteConnection(ConnectionString))
             {
                 //  запрос на вставку данных с плейсхолдерами для параметров
-                connection.Execute("INSERT INTO @tableName(value, time) VALUES(@value, @time)",
+                connection.Execute("INSERT INTO " +
+                    tableName +
+                    " (value, time) VALUES(@value, @time)",
                     // анонимный объект с параметрами запроса
                     new
                     {
@@ -35,7 +37,9 @@ namespace MetricsAgent.DAL.Repositories
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
-                connection.Execute("DELETE FROM @tableName WHERE id=@id",
+                connection.Execute("DELETE FROM "+
+                    tableName+
+                    " WHERE id=@id",
                     new
                     {
                         id = id
@@ -47,7 +51,8 @@ namespace MetricsAgent.DAL.Repositories
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
-                connection.Execute("UPDATE @tableName SET value = @value, time = @time WHERE id=@id",
+                connection.Execute("UPDATE "+
+                    tableName+" SET value = @value, time = @time WHERE id=@id",
                     new
                     {
                         value = item.Value,
@@ -64,7 +69,7 @@ namespace MetricsAgent.DAL.Repositories
                 // читаем при помощи Query и в шаблон подставляем тип данных
                 // объект которого Dapper сам и заполнит его поля
                 // в соответсвии с названиями колонок
-                return connection.Query<MetricContainer>("SELECT Id, Time, Value FROM @tableName").ToList();
+                return connection.Query<MetricContainer>("SELECT Id, Time, Value FROM "+tableName).ToList();
             }
         }
 
@@ -72,7 +77,8 @@ namespace MetricsAgent.DAL.Repositories
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
-                return connection.QuerySingle<MetricContainer>("SELECT Id, Time, Value FROM @tableName WHERE id=@id",
+                return connection.QuerySingle<MetricContainer>("SELECT Id, Time, Value FROM "+
+                    tableName+" WHERE id=@id",
                     new { id = id });
             }
         }
@@ -84,8 +90,9 @@ namespace MetricsAgent.DAL.Repositories
                 // читаем при помощи Query и в шаблон подставляем тип данных
                 // объект которого Dapper сам и заполнит его поля
                 // в соответсвии с названиями колонок
-                return connection.Query<MetricContainer>("SELECT Id, Time, Value FROM @tableName " +
-                    "WHERE Time >= @fromTime AND Time <= toTime").ToList();
+                return connection.Query<MetricContainer>("SELECT Id, Time, Value FROM "+
+                    tableName +
+                    " WHERE Time >= @fromTime AND Time <= toTime").ToList();
             }
         }
     }
