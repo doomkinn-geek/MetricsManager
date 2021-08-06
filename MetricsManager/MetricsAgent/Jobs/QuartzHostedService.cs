@@ -16,6 +16,7 @@ namespace MetricsAgent.Jobs
         private readonly IJobFactory _jobFactory;
         private readonly IEnumerable<JobSchedule> _jobSchedules;
 
+        //вебинар начиная с 1:11:00
         public QuartzHostedService(
             CpuMetricsRepository repository,
             ISchedulerFactory schedulerFactory,
@@ -26,6 +27,50 @@ namespace MetricsAgent.Jobs
             _jobSchedules = jobSchedules;
             _jobFactory = jobFactory;
         }
+
+        /*public QuartzHostedService(
+            HddMetricsRepository repository,
+            ISchedulerFactory schedulerFactory,
+            IJobFactory jobFactory,
+            IEnumerable<JobSchedule> jobSchedules)
+        {
+            _schedulerFactory = schedulerFactory;
+            _jobSchedules = jobSchedules;
+            _jobFactory = jobFactory;
+        }
+
+        public QuartzHostedService(
+            RamMetricsRepository repository,
+            ISchedulerFactory schedulerFactory,
+            IJobFactory jobFactory,
+            IEnumerable<JobSchedule> jobSchedules)
+        {
+            _schedulerFactory = schedulerFactory;
+            _jobSchedules = jobSchedules;
+            _jobFactory = jobFactory;
+        }
+
+        public QuartzHostedService(
+            DotNetMetricsRepository repository,
+            ISchedulerFactory schedulerFactory,
+            IJobFactory jobFactory,
+            IEnumerable<JobSchedule> jobSchedules)
+        {
+            _schedulerFactory = schedulerFactory;
+            _jobSchedules = jobSchedules;
+            _jobFactory = jobFactory;
+        }
+
+        public QuartzHostedService(
+            NetworkMetricsRepository repository,
+            ISchedulerFactory schedulerFactory,
+            IJobFactory jobFactory,
+            IEnumerable<JobSchedule> jobSchedules)
+        {
+            _schedulerFactory = schedulerFactory;
+            _jobSchedules = jobSchedules;
+            _jobFactory = jobFactory;
+        }*/
         public IScheduler Scheduler { get; set; }
 
         public async Task StartAsync(CancellationToken cancellationToken)
