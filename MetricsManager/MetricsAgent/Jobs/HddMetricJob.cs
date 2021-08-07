@@ -20,20 +20,19 @@ namespace MetricsAgent.Jobs
         public HddMetricJob(HddMetricsRepository repository)
         {
             _repository = repository;
-            _hddCounter = new PerformanceCounter("PhysicalDisk", "Free Space");
+            _hddCounter = new PerformanceCounter("LogicalDisk", "Free Megabytes", "_Total");
         }
 
         public Task Execute(IJobExecutionContext context)
-        {
-            // получаем значение занятости CPU
-            var cpuUsageInPercents = Convert.ToInt32(_hddCounter.NextValue());
+        {            
+            var value = Convert.ToInt32(_hddCounter.NextValue());
 
             // узнаем когда мы сняли значение метрики.
             var time = TimeSpan.FromSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
 
             // теперь можно записать что-то при помощи репозитория
 
-            _repository.Create(new DAL.Models.MetricContainer { Time = time, Value = cpuUsageInPercents });
+            _repository.Create(new DAL.Models.MetricContainer { Time = time, Value = value });
 
             return Task.CompletedTask;
         }

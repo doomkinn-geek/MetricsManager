@@ -10,23 +10,26 @@ using System.Threading.Tasks;
 
 namespace MetricsAgent.Jobs
 {
-    public class RamMetricJob : IJob
+    public class NetworkMetricJob : IJob
     {
-        private RamMetricsRepository _repository;
+        private NetworkMetricsRepository _repository;
         
-        private PerformanceCounter _ramCounter;
+        private PerformanceCounter _netCounter;
 
 
-        public RamMetricJob(RamMetricsRepository repository)
+        public NetworkMetricJob(NetworkMetricsRepository repository)
         {
             _repository = repository;
-            _ramCounter = new PerformanceCounter("Memory", "Available MBytes");
+
+
+            PerformanceCounterCategory category = new PerformanceCounterCategory("Network Interface");
+            String[] instancename = category.GetInstanceNames();
+            _netCounter = new PerformanceCounter("Network Interface", "Bytes Sent/sec", instancename[0]);
         }
 
         public Task Execute(IJobExecutionContext context)
-        {
-            
-            var value = Convert.ToInt32(_ramCounter.NextValue());
+        {            
+            var value = Convert.ToInt32(_netCounter.NextValue());
 
             // узнаем когда мы сняли значение метрики.
             var time = TimeSpan.FromSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds());

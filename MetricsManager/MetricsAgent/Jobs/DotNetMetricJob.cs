@@ -10,30 +10,30 @@ using System.Threading.Tasks;
 
 namespace MetricsAgent.Jobs
 {
-    public class RamMetricJob : IJob
+    public class DotNetMetricJob : IJob
     {
-        private RamMetricsRepository _repository;
-        
-        private PerformanceCounter _ramCounter;
+        private DotNetMetricsRepository _repository;
+        // счетчик для метрики CPU
+        private PerformanceCounter _dotNetCounter;
 
 
-        public RamMetricJob(RamMetricsRepository repository)
+        public DotNetMetricJob(DotNetMetricsRepository repository)
         {
             _repository = repository;
-            _ramCounter = new PerformanceCounter("Memory", "Available MBytes");
+            //_dotNetCounter = new PerformanceCounter("LogicalDisk", "Free Megabytes", "_Total");???          
         }
 
         public Task Execute(IJobExecutionContext context)
         {
-            
-            var value = Convert.ToInt32(_ramCounter.NextValue());
+            //var cpuUsageInPercents = Convert.ToInt32(_dotNetCounter.NextValue());
+            var value = GC.GetTotalMemory(true);//может быть так можно получить размер кучи
 
             // узнаем когда мы сняли значение метрики.
             var time = TimeSpan.FromSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
 
             // теперь можно записать что-то при помощи репозитория
 
-            _repository.Create(new DAL.Models.MetricContainer { Time = time, Value = value });
+            _repository.Create(new DAL.Models.MetricContainer { Time = time, Value = (int)value });
 
             return Task.CompletedTask;
         }
