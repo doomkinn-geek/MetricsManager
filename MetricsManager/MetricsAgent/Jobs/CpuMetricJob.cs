@@ -33,7 +33,7 @@ namespace MetricsAgent.Jobs
 
             // теперь можно записать что-то при помощи репозитория
 
-            _repository.Create(new DAL.Models.MetricContainer { Time = time, Value = cpuUsageInPercents });
+            _repository.Create(new DAL.Models.Metric { Time = time, Value = cpuUsageInPercents });
 
             return Task.CompletedTask;
         }

@@ -26,14 +26,14 @@ namespace MetricsManagerTests
         {
             // устанавливаем параметр заглушки
             // в заглушке прописываем что в репозиторий прилетит MetricContainer объект
-            mock.Setup(repository => repository.Create(It.IsAny<MetricContainer>())).Verifiable();
+            mock.Setup(repository => repository.Create(It.IsAny<Metric>())).Verifiable();
 
             // выполняем действие на контроллере
             var result = controller.Create(new MetricsAgent.Requests.MetricCreateRequest { Time = TimeSpan.FromSeconds(1), Value = 50 });
 
             // проверяем заглушку на то, что пока работал контроллер
             // действительно вызвался метод Create репозитория с нужным типом объекта в параметре
-            mock.Verify(repository => repository.Create(It.IsAny<MetricContainer>()), Times.AtMostOnce());
+            mock.Verify(repository => repository.Create(It.IsAny<Metric>()), Times.AtMostOnce());
         }
     }
 

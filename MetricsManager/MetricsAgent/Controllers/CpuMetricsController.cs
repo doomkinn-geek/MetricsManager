@@ -28,7 +28,7 @@ namespace MetricsAgent.Controllers
         [HttpPost("create")]
         public IActionResult Create([FromBody] MetricCreateRequest request)
         {
-            repository.Create(new MetricContainer
+            repository.Create(new Metric
             {
                 Time = request.Time,
                 Value = request.Value
@@ -43,9 +43,9 @@ namespace MetricsAgent.Controllers
             return Ok();
         }
         [HttpPut("update")]
-        public IActionResult Update([FromBody] MetricContainer request)
+        public IActionResult Update([FromBody] Metric request)
         {
-            repository.Update(new MetricContainer
+            repository.Update(new Metric
             {
                 Id = request.Id,
                 Time = request.Time,
@@ -155,7 +155,7 @@ namespace MetricsAgent.Controllers
                     string readQuery = "SELECT * FROM cpumetrics LIMIT 3";
 
                     // создаем массив, в который запишем объекты с данными из базы данных
-                    var returnArray = new MetricContainer[3];
+                    var returnArray = new Metric[3];
                     // изменяем текст команды на наш запрос чтения
                     command.CommandText = readQuery;
 
@@ -168,7 +168,7 @@ namespace MetricsAgent.Controllers
                         while (reader.Read())
                         {
                             // создаем объект и записываем его в массив
-                            returnArray[counter] = new MetricContainer
+                            returnArray[counter] = new Metric
                             {
                                 Id = reader.GetInt32(0), // читаем данные полученные из базы данных
                                 Value = reader.GetInt32(1), // преобразуя к целочисленному типу
