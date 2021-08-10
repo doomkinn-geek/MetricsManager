@@ -13,7 +13,7 @@ namespace MetricsAgent
         public MapperProfile()
         {
             // добавлять сопоставления в таком стиле нужно для всех объектов 
-            CreateMap<MetricContainer, MetricDto>();
+            CreateMap<Metric, MetricDto>();
         }
     }
 

@@ -8,17 +8,22 @@ using System.Threading.Tasks;
 
 namespace MetricsAgent.DAL.Repositories
 {
-    public static class AbstractRepository
+    public abstract class AbstractRepository
     {
         private const string ConnectionString = @"Data Source=metrics.db; Version=3;Pooling=True;Max Pool Size=100;";
+        public string TableName { get; set;}
 
-        public static void AbstractCreate(MetricContainer item, string tableName)
+        public AbstractRepository(string _tablename)
+        {
+            TableName = _tablename;
+        }
+        public void AbstractCreate(Metric item)
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
                 //  запрос на вставку данных с плейсхолдерами для параметров
                 connection.Execute("INSERT INTO " +
-                    tableName +
+                    TableName +
                     " (value, time) VALUES(@value, @time)",
                     // анонимный объект с параметрами запроса
                     new
@@ -33,12 +38,12 @@ namespace MetricsAgent.DAL.Repositories
             }
         }
 
-        public static void AbstractDelete(int id, string tableName)
+        public void AbstractDelete(int id)
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
                 connection.Execute("DELETE FROM " +
-                    tableName +
+                    TableName +
                     " WHERE id=@id",
                     new
                     {
@@ -47,58 +52,56 @@ namespace MetricsAgent.DAL.Repositories
             }
         }
 
-        public static void AbstractUpdate(MetricContainer item, string tableName)
+        public void AbstractUpdate(Metric item)
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
-                connection.Execute("UPDATE " +
-                    tableName + " SET value = @value, time = @time WHERE id=@id",
-                    new
-                    {
-                        value = item.Value,
-                        time = item.Time.TotalSeconds,
-                        id = item.Id
-                    });
+                connection.Execute("UPDATE " + TableName + " SET value = @value, time = @time WHERE id=@id", new
+                {
+                    value = item.Value,
+                    time = item.Time.TotalSeconds,
+                    id = item.Id
+                });
             }
         }
 
-        public static IList<MetricContainer> AbstractGetAll(string tableName)
+        public IList<Metric> AbstractGetAll()
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
                 // читаем при помощи Query и в шаблон подставляем тип данных
                 // объект которого Dapper сам и заполнит его поля
                 // в соответсвии с названиями колонок
-                return connection.Query<MetricContainer>("SELECT Id, Time, Value FROM " + tableName).ToList();
+                return connection.Query<Metric>("SELECT Id, Time, Value FROM " + TableName).ToList();
             }
         }
 
-        public static MetricContainer AbstractGetById(int id, string tableName)
+        public Metric AbstractGetById(int id)
         {
             try
             {
                 using (var connection = new SQLiteConnection(ConnectionString))
                 {
-                    return connection.QuerySingle<MetricContainer>("SELECT Id, Time, Value FROM " +
-                        tableName + " WHERE id=@id",
+                    return connection.QuerySingle<Metric>("SELECT Id, Time, Value FROM " +
+                        TableName + " WHERE id=@id",
                         new { id = id });
                 }
             }
             catch(Exception e)
             {
-                return new MetricContainer { Id = 0 };
+                return new Metric { Id = 0 };
             }
         }
 
-        public static IList<MetricContainer> AbstractGetByTimePeriod(TimeSpan fromTime, TimeSpan toTime, string tableName)
+        public IList<Metric> AbstractGetByTimePeriod(TimeSpan fromTime, TimeSpan toTime)
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
                 // читаем при помощи Query и в шаблон подставляем тип данных
                 // объект которого Dapper сам и заполнит его поля
                 // в соответсвии с названиями колонок
-                return connection.Query<MetricContainer>("SELECT Id, Time, Value FROM " +
-                    tableName +
+                return connection.Query<Metric>("SELECT Id, Time, Value FROM " +
+                    TableName +
                     " WHERE Time >= @fromTime AND Time <= toTime").ToList();
             }
         }

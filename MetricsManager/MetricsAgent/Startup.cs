@@ -28,7 +28,10 @@ namespace MetricsAgent
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            var configurationBuilder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", true, false);
+
+            Configuration = configurationBuilder.Build();
         }
 
         public IConfiguration Configuration { get; }

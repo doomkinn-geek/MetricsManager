@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MetricsAgent.DAL.Models
 {
-    public class MetricContainer
+    public class Metric
     {
         public int Id { get; set; }
         public int Value { get; set; }

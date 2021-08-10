@@ -11,42 +11,41 @@ using System.Threading.Tasks;
 namespace MetricsAgent.DAL
 {
 
-    public class HddMetricsRepository : IRepository<MetricContainer>
+    public class HddMetricsRepository : AbstractRepository, IRepository<Metric>
     {
-        private const string tableName = "hddmetrics";
-        public HddMetricsRepository()
+        public HddMetricsRepository() : base("hddmetrics")
         {
             // добавляем парсилку типа TimeSpan в качестве подсказки для SQLite
             SqlMapper.AddTypeHandler(new TimeSpanHandler());
         }
-        public void Create(MetricContainer item)
+        public void Create(Metric item)
         {
-            AbstractRepository.AbstractCreate(item, tableName);
+            AbstractCreate(item);
         }
 
         public void Delete(int id)
         {
-            AbstractRepository.AbstractDelete(id, tableName);
+            AbstractDelete(id);
         }
 
-        public void Update(MetricContainer item)
+        public void Update(Metric item)
         {
-            AbstractRepository.AbstractUpdate(item, tableName);
+            AbstractUpdate(item);
         }
 
-        public IList<MetricContainer> GetAll()
+        public IList<Metric> GetAll()
         {
-            return AbstractRepository.AbstractGetAll(tableName);
+            return AbstractGetAll();
         }
 
-        public MetricContainer GetById(int id)
+        public Metric GetById(int id)
         {
-            return AbstractRepository.AbstractGetById(id, tableName);
+            return AbstractGetById(id);
         }
 
-        public IList<MetricContainer> GetByTimePeriod(TimeSpan fromTime, TimeSpan toTime)
+        public IList<Metric> GetByTimePeriod(TimeSpan fromTime, TimeSpan toTime)
         {
-            return AbstractRepository.AbstractGetByTimePeriod(fromTime, toTime, tableName);
+            return AbstractGetByTimePeriod(fromTime, toTime);
         }
     }
 

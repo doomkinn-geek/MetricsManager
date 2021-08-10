@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
+
 namespace MetricsAgent.Controllers
 {
     [Route("api/[controller]")]
@@ -25,7 +26,7 @@ namespace MetricsAgent.Controllers
         [HttpPost("create")]
         public IActionResult Create([FromBody] MetricCreateRequest request)
         {
-            repository.Create(new MetricContainer
+            repository.Create(new Metric
             {
                 Time = request.Time,
                 Value = request.Value
@@ -40,9 +41,9 @@ namespace MetricsAgent.Controllers
             return Ok();
         }
         [HttpPut("update")]
-        public IActionResult Update([FromBody] MetricContainer request)
+        public IActionResult Update([FromBody] Metric request)
         {
-            repository.Update(new MetricContainer
+            repository.Update(new Metric
             {
                 Id = request.Id,
                 Time = request.Time,

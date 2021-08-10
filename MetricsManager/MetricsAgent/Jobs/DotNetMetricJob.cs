@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace MetricsAgent.Jobs
 {
     public class DotNetMetricJob : IJob
@@ -19,21 +20,20 @@ namespace MetricsAgent.Jobs
 
         public DotNetMetricJob(DotNetMetricsRepository repository)
         {
-            _repository = repository;
-            //_dotNetCounter = new PerformanceCounter("LogicalDisk", "Free Megabytes", "_Total");???          
+            _repository = repository;            
+            _dotNetCounter = new PerformanceCounter(".NET CLR Memory", "# bytes in all heaps", "_Global_");
         }
 
         public Task Execute(IJobExecutionContext context)
-        {
-            //var cpuUsageInPercents = Convert.ToInt32(_dotNetCounter.NextValue());
-            var value = GC.GetTotalMemory(true);//может быть так можно получить размер кучи
+        {            
+            var value = Convert.ToInt32(_dotNetCounter.NextValue());
 
             // узнаем когда мы сняли значение метрики.
             var time = TimeSpan.FromSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
 
             // теперь можно записать что-то при помощи репозитория
 
-            _repository.Create(new DAL.Models.MetricContainer { Time = time, Value = (int)value });
+            _repository.Create(new DAL.Models.Metric { Time = time, Value = (int)value });
 
             return Task.CompletedTask;
         }
