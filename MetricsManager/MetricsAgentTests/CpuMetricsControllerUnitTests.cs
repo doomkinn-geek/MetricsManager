@@ -1,7 +1,9 @@
+using AutoMapper;
 using MetricsAgent;
 using MetricsAgent.Controllers;
 using MetricsAgent.DAL;
 using MetricsAgent.DAL.Models;
+using MetricsAgent.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
@@ -13,12 +15,14 @@ namespace MetricsManagerTests
     {
         private CpuMetricsController controller;
         private Mock<CpuMetricsRepository> mock;
+        private Mock<IMapper> mapper;
 
 
         public CpuMetricsControllerUnitTests()
         {
             mock = new Mock<CpuMetricsRepository>();
-            controller = new CpuMetricsController(mock.Object, null);
+            mapper = new Mock<IMapper>();
+            controller = new CpuMetricsController(mock.Object, mapper.Object);
         }
 
         [Fact]
@@ -26,10 +30,12 @@ namespace MetricsManagerTests
         {
             // устанавливаем параметр заглушки
             // в заглушке прописываем что в репозиторий прилетит MetricContainer объект
-            mock.Setup(repository => repository.Create(It.IsAny<Metric>())).Verifiable();
+            var cpuMetric = new Metric() { };
+            mock.Setup(repository => repository.GetById(It.IsAny<int>())).Returns(cpuMetric);
+            var request = new MetricCreateRequest { Time = TimeSpan.FromSeconds(1), Value = 50 };
 
             // выполняем действие на контроллере
-            var result = controller.Create(new MetricsAgent.Requests.MetricCreateRequest { Time = TimeSpan.FromSeconds(1), Value = 50 });
+            var result = controller.Create(request);
 
             // проверяем заглушку на то, что пока работал контроллер
             // действительно вызвался метод Create репозитория с нужным типом объекта в параметре

@@ -46,5 +46,12 @@ namespace MetricsManager.Controllers
             _logger.LogInformation("GetAgentsList");
             return Ok();
         }
+
+        /*[Route("agent/{agentId}/from/{fromTime}/to/{toTime}")]
+        [HttpGet]
+        public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        {
+
+        }*/
     }    
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using MetricsManager.Request;
+using MetricsManager.Response;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,45 +12,59 @@ namespace MetricsManager.Client
 {
     public class MetricsAgentClient : IMetricsAgentClient
     {
-        private readonly HttpClient _httpClient;
-        private readonly ILogger _logger;
+        private readonly HttpClient httpClient;
+        private readonly ILogger logger;
 
         public MetricsAgentClient(HttpClient httpClient, ILogger logger)
         {
-            _httpClient = httpClient;
-            _logger = logger;
+            this.httpClient = httpClient;
+            this.logger = logger;
         }
 
-        public AllHddMetricsApiResponse GetAllHddMetrics(GetAllHddMetricsApiRequest request)
+        public AllMetricsResponse GetAllHddMetrics(GetAllMetricsRequest request)
         {
             var fromParameter = request.FromTime.TotalSeconds;
             var toParameter = request.ToTime.TotalSeconds;
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"{request.ClientBaseAddress}/api/hddmetrics/from/{fromParameter}/to/{toParameter}");
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/hddmetrics/from/{fromParameter}/to/{toParameter}");
             try
             {
-                HttpResponseMessage response = _httpClient.SendAsync(httprequest).Result;
+                HttpResponseMessage response = httpClient.SendAsync(httpRequest).Result;
 
                 using var responseStream = response.Content.ReadAsStreamAsync().Result;
-                return JsonSerializer.DeserializeAsync<AllHddMetricsApiResponse>(responseStream).Result;
+                return JsonSerializer.DeserializeAsync<AllMetricsResponse>(responseStream).Result;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                logger.LogError(ex.Message);
             }
             return null;
         }
 
-        public AllRamMetricsApiResponse GetAllRamMetrics(GetAllRamMetricsApiRequest request)
+        public AllMetricsResponse GetAllRamMetrics(GetAllMetricsRequest request)
         {
             throw new NotImplementedException();
         }
 
-        public AllCpuMetricsApiResponse GetCpuMetrics(GetAllCpuMetricsApiRequest request)
+        public AllMetricsResponse GetCpuMetrics(GetAllMetricsRequest request)
         {
-            throw new NotImplementedException();
+            var fromParameter = request.FromTime.TotalSeconds;
+            var toParameter = request.ToTime.TotalSeconds;
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/cpumetrics/from/{fromParameter}/to/{toParameter}");
+            try
+            {
+                HttpResponseMessage response = httpClient.SendAsync(httpRequest).Result;
+
+                using var responseStream = response.Content.ReadAsStreamAsync().Result;
+                return JsonSerializer.DeserializeAsync<AllMetricsResponse>(responseStream).Result;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message);
+            }
+            return null;
         }
 
-        public DonNetMetricsApiResponse GetDonNetMetrics(DonNetHeapMetrisApiRequest request)
+        public AllMetricsResponse GetDonNetMetrics(GetAllMetricsRequest request)
         {
             throw new NotImplementedException();
         }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MetricsManager.Request;
+using MetricsManager.Response;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,13 +9,13 @@ namespace MetricsManager.Client
 {
     public interface IMetricsAgentClient
     {
-        AllRamMetricsApiResponse GetAllRamMetrics(GetAllRamMetricsApiRequest request);
+        AllMetricsResponse GetAllRamMetrics(GetAllMetricsRequest request);
 
-        AllHddMetricsApiResponse GetAllHddMetrics(GetAllHddMetricsApiRequest request);
+        AllMetricsResponse GetAllHddMetrics(GetAllMetricsRequest request);
 
-        DonNetMetricsApiResponse GetDonNetMetrics(DonNetHeapMetrisApiRequest request);
+        AllMetricsResponse GetDonNetMetrics(GetAllMetricsRequest request);
 
-        AllCpuMetricsApiResponse GetCpuMetrics(GetAllCpuMetricsApiRequest request);
+        AllMetricsResponse GetCpuMetrics(GetAllMetricsRequest request);
 
     }
 
