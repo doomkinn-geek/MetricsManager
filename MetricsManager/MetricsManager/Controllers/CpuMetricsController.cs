@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
-using MetricsManager.Client;
-using MetricsManager.Request;
-using MetricsManager.Response;
+using MetricsAgent.Client;
+using MetricsAgent.Request;
+using MetricsAgent.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net.Http;
 using System.Text.Json;
 
-namespace MetricsManager.Controllers
+namespace MetricsAgent.Controllers
 {
     [Route("api/metrics/cpu")]
     [ApiController]

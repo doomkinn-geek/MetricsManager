@@ -1,5 +1,5 @@
-﻿using MetricsManager.Request;
-using MetricsManager.Response;
+﻿using MetricsAgent.Request;
+using MetricsAgent.Response;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace MetricsManager.Client
+namespace MetricsAgent.Client
 {
     public class MetricsAgentClient : IMetricsAgentClient
     {

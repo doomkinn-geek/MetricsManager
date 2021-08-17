@@ -1,11 +1,11 @@
-﻿using MetricsManager.Request;
-using MetricsManager.Response;
+﻿using MetricsAgent.Request;
+using MetricsAgent.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MetricsManager.Client
+namespace MetricsAgent.Client
 {
     public interface IMetricsAgentClient
     {

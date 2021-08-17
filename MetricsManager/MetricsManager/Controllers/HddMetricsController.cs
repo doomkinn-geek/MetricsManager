@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 
 
-namespace MetricsManager.Controllers
+namespace MetricsAgent.Controllers
 {
     [Route("api/metrics/hdd/left")]
     [ApiController]

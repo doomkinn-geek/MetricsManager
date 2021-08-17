@@ -1,7 +1,7 @@
 ﻿using MetricsAgent.Responses;
 using System.Collections.Generic;
 
-namespace MetricsManager.Response
+namespace MetricsAgent.Response
 {
     public class AllMetricsResponse
     {
