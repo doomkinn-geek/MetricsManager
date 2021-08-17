@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using MetricsManager.Client;
+using MetricsManager.Request;
 using MetricsManager.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,38 +15,31 @@ namespace MetricsManager.Controllers
     public class CpuMetricsController : ControllerBase
     {
         private readonly ILogger<CpuMetricsController> _logger;
+
         //private CpuMetricsRepository repository;
         //private readonly IMapper mapper;
-        IHttpClientFactory clientFactory;
+        private IMetricsAgentClient metricsAgentClient;
 
-        public CpuMetricsController(ILogger<CpuMetricsController> logger, IHttpClientFactory clientFactory)
+        public CpuMetricsController(ILogger<CpuMetricsController> logger, IMetricsAgentClient metrcisAgentClient)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в CpuMetricsController");
-            this.clientFactory = clientFactory;
+            this.metricsAgentClient = metricsAgentClient;
         }
 
 
         [HttpGet("agent/{agentId}/from/{fromTime}/to/{toTime}")]
         public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
         {
-            _logger.LogInformation("GetMetricsFromAgent: agentId = {0}, fromTime = {1}, toTime = {2}", agentId, fromTime, toTime);
-            var request = new HttpRequestMessage(HttpMethod.Get,
-                "http://localhost:50343/api/cpumetrics/from/1/to/999999?var=val&var1=val1");
-            request.Headers.Add("Accept", "application/vnd.github.v3+json");
-            var client = clientFactory.CreateClient();
-            HttpResponseMessage response = client.SendAsync(request).Result;
-            if (response.IsSuccessStatusCode)
+            _logger.LogInformation("GetMetricsFromAgent: agentId = {0}, fromTime = {1}, toTime = {2}", agentId, fromTime, toTime);            
+            var request = new GetAllMetricsRequest
             {
-                using var responseStream = response.Content.ReadAsStreamAsync().Result;
-                var metricsResponse = JsonSerializer.DeserializeAsync
-                    <AllMetricsResponse>(responseStream).Result;
-            }
-            else
-            {
-                // ошибка при получении ответа
-            }
-            return Ok();
+                FromTime = fromTime,
+                ToTime = toTime
+            };
+            var metrics = metricsAgentClient.GetCpuMetrics(request);
+
+            return Ok(metrics);
         }
 
         [HttpGet("cluster/from/{fromTime}/to/{toTime}")]
