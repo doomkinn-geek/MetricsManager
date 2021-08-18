@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using MetricsAgent.DAL.Models;
+using MetricsManager.DAL.Models;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using System;

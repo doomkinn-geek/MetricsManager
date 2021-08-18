@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MetricsAgent.DAL.Migrations
+namespace MetricsManager.DAL.Migrations
 {
     [Migration(1)]
     public class FirstMigration : Migration

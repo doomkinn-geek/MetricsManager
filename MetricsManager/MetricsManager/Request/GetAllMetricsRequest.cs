@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MetricsAgent.Request
+namespace MetricsManager.Request
 {
     public class GetAllMetricsRequest
     {

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 
 
-namespace MetricsAgent.Controllers
+namespace MetricsManager.Controllers
 {
     [Route("api/metrics/ram/available")]
     [ApiController]

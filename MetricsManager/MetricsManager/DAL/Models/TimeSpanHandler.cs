@@ -2,7 +2,7 @@
 using System;
 using System.Data;
 
-namespace MetricsAgent.DAL.Repositories
+namespace MetricsManager.DAL.Repositories
 {
     public class TimeSpanHandler : SqlMapper.TypeHandler<TimeSpan>
     {

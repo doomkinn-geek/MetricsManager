@@ -1,7 +1,7 @@
 ﻿using Core;
 using Dapper;
-using MetricsAgent.DAL.Models;
-using MetricsAgent.DAL.Repositories;
+using MetricsManager.DAL.Models;
+using MetricsManager.DAL.Repositories;
 using MetricsManager.DAL.Repositories;
 using Microsoft.Extensions.Configuration;
 using System;
