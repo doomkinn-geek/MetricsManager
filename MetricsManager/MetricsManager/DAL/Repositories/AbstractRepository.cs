@@ -21,7 +21,7 @@ namespace MetricsManager.DAL.Repositories
         {
             TableName = _tablename;
             this.Configuration = _configuration;
-            ConnectionString = Configuration["ConnectionString"];
+            ConnectionString = Configuration["ConnectionStrings:DefaultConnection"];
         }
         public void AbstractCreate(Metric item)
         {

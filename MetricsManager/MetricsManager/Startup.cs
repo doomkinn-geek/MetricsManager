@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using NLog;
 using Polly;
 using System;
+using System.Data.SQLite;
 
 namespace MetricsManager
 {
@@ -25,6 +26,7 @@ namespace MetricsManager
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            ConfigureSqlLiteConnection(services);
 
             services.AddSingleton<CpuMetricsRepository>();
             services.AddSingleton<DotNetMetricsRepository>();
@@ -32,25 +34,33 @@ namespace MetricsManager
             services.AddSingleton<NetworkMetricsRepository>();
             services.AddSingleton<RamMetricsRepository>();
 
-            
-            services.AddSingleton<ILogger>();
-
-            services.AddHttpClient<IMetricsAgentClient, MetricsAgentClient>()
-                .AddTransientHttpErrorPolicy(p =>
-                p.WaitAndRetryAsync(3, _ => TimeSpan.FromMilliseconds(1000)));
-            services.AddSingleton<IMetricsAgentClient, MetricsAgentClient>();
-
             services.AddFluentMigratorCore()
                 .ConfigureRunner(rb => rb
                     // добавляем поддержку SQLite 
                     .AddSQLite()
                     // устанавливаем строку подключения
-                    .WithGlobalConnectionString(Configuration["ConnectionStrings"])
+                    .WithGlobalConnectionString(Configuration["ConnectionStrings:DefaultConnection"])
                     // подсказываем где искать классы с миграциями
                     .ScanIn(typeof(Startup).Assembly).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole());
 
+            //services.AddSingleton<ILogger>();
+
+            services.AddHttpClient<IMetricsAgentClient, MetricsAgentClient>()
+                .AddTransientHttpErrorPolicy(p =>
+                p.WaitAndRetryAsync(3, _ => TimeSpan.FromMilliseconds(1000)));
+            services.AddSingleton<IMetricsAgentClient, MetricsAgentClient>();
+        }
+
+        private void ConfigureSqlLiteConnection(IServiceCollection services)
+        {
+            //string connectionString = Configuration["ConnectionStrings: DefaultConnection"];
+            //string connectionString = Configuration.Get("ConnectionStrings");
+            var connectionString = Configuration["ConnectionStrings:DefaultConnection"];
+            var connection = new SQLiteConnection(connectionString);
+            connection.Open();
+            //PrepareSchema(connection);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

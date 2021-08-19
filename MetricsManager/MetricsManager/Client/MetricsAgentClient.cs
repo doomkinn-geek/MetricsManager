@@ -13,9 +13,9 @@ namespace MetricsManager.Client
     public class MetricsAgentClient : IMetricsAgentClient
     {
         private readonly HttpClient httpClient;
-        private readonly ILogger logger;
+        private readonly ILogger<MetricsAgentClient> logger;
 
-        public MetricsAgentClient(HttpClient httpClient, ILogger logger)
+        public MetricsAgentClient(HttpClient httpClient, ILogger<MetricsAgentClient> logger)
         {
             this.httpClient = httpClient;
             this.logger = logger;
