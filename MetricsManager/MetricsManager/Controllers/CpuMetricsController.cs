@@ -20,11 +20,11 @@ namespace MetricsManager.Controllers
         //private readonly IMapper mapper;
         private IMetricsAgentClient metricsAgentClient;
 
-        public CpuMetricsController(ILogger<CpuMetricsController> logger, IMetricsAgentClient metrcisAgentClient)
+        public CpuMetricsController(ILogger<CpuMetricsController> logger, IMetricsAgentClient _metrcisAgentClient)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в CpuMetricsController");
-            this.metricsAgentClient = metricsAgentClient;
+            metricsAgentClient = _metrcisAgentClient;
         }
 
 

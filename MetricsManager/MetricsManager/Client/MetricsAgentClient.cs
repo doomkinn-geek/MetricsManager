@@ -25,7 +25,8 @@ namespace MetricsManager.Client
         {
             var fromParameter = request.FromTime.TotalSeconds;
             var toParameter = request.ToTime.TotalSeconds;
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/hddmetrics/from/{fromParameter}/to/{toParameter}");
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, 
+                    $"{request.ClientBaseAddress}/api/hddmetrics/from/{fromParameter}/to/{toParameter}");
             try
             {
                 HttpResponseMessage response = httpClient.SendAsync(httpRequest).Result;
@@ -42,14 +43,30 @@ namespace MetricsManager.Client
 
         public AllMetricsResponse GetAllRamMetrics(GetAllMetricsRequest request)
         {
-            throw new NotImplementedException();
+            var fromParameter = request.FromTime.TotalSeconds;
+            var toParameter = request.ToTime.TotalSeconds;
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get,
+                    $"{request.ClientBaseAddress}/api/rammetrics/from/{fromParameter}/to/{toParameter}");
+            try
+            {
+                HttpResponseMessage response = httpClient.SendAsync(httpRequest).Result;
+
+                using var responseStream = response.Content.ReadAsStreamAsync().Result;
+                return JsonSerializer.DeserializeAsync<AllMetricsResponse>(responseStream).Result;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message);
+            }
+            return null;
         }
 
         public AllMetricsResponse GetCpuMetrics(GetAllMetricsRequest request)
         {
             var fromParameter = request.FromTime.TotalSeconds;
             var toParameter = request.ToTime.TotalSeconds;
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/cpumetrics/from/{fromParameter}/to/{toParameter}");
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, 
+                    $"{request.ClientBaseAddress}/api/cpumetrics/from/{fromParameter}/to/{toParameter}");
             try
             {
                 HttpResponseMessage response = httpClient.SendAsync(httpRequest).Result;
@@ -66,7 +83,42 @@ namespace MetricsManager.Client
 
         public AllMetricsResponse GetDonNetMetrics(GetAllMetricsRequest request)
         {
-            throw new NotImplementedException();
+            var fromParameter = request.FromTime.TotalSeconds;
+            var toParameter = request.ToTime.TotalSeconds;
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get,
+                    $"{request.ClientBaseAddress}/api/dotnetmetrics/from/{fromParameter}/to/{toParameter}");
+            try
+            {
+                HttpResponseMessage response = httpClient.SendAsync(httpRequest).Result;
+
+                using var responseStream = response.Content.ReadAsStreamAsync().Result;
+                return JsonSerializer.DeserializeAsync<AllMetricsResponse>(responseStream).Result;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message);
+            }
+            return null;
+        }
+
+        public AllMetricsResponse GetNetworkMetrics(GetAllMetricsRequest request)
+        {
+            var fromParameter = request.FromTime.TotalSeconds;
+            var toParameter = request.ToTime.TotalSeconds;
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get,
+                    $"{request.ClientBaseAddress}/api/networkmetrics/from/{fromParameter}/to/{toParameter}");
+            try
+            {
+                HttpResponseMessage response = httpClient.SendAsync(httpRequest).Result;
+
+                using var responseStream = response.Content.ReadAsStreamAsync().Result;
+                return JsonSerializer.DeserializeAsync<AllMetricsResponse>(responseStream).Result;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message);
+            }
+            return null;
         }
     }
 

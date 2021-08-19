@@ -17,6 +17,8 @@ namespace MetricsManager.Client
 
         AllMetricsResponse GetCpuMetrics(GetAllMetricsRequest request);
 
+        AllMetricsResponse GetNetworkMetrics(GetAllMetricsRequest request);
+
     }
 
 }

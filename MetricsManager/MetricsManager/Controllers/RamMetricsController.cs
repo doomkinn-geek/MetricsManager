@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MetricsManager.Client;
+using MetricsManager.Request;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 
@@ -10,17 +12,26 @@ namespace MetricsManager.Controllers
     public class RamMetricsController : ControllerBase
     {
         private readonly ILogger<RamMetricsController> _logger;
-        public RamMetricsController(ILogger<RamMetricsController> logger)
+        private IMetricsAgentClient metricsAgentClient;
+        public RamMetricsController(ILogger<RamMetricsController> logger, IMetricsAgentClient _metrcisAgentClient)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в DotNetMetricsController");
+            metricsAgentClient = _metrcisAgentClient;
         }
 
         [HttpGet("agent/{agentId}/from/{fromTime}/to/{toTime}")]
         public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
         {
             _logger.LogInformation("GetMetricsFromAgent: agentId = {0}, fromTime = {1}, toTime = {2}", agentId, fromTime, toTime);
-            return Ok();            
+            var request = new GetAllMetricsRequest
+            {
+                FromTime = fromTime,
+                ToTime = toTime
+            };
+            var metrics = metricsAgentClient.GetNetworkMetrics(request);
+
+            return Ok(metrics);
         }
 
         [HttpGet("cluster/from/{fromTime}/to/{toTime}")]

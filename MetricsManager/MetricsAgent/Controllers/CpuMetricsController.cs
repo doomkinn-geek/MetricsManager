@@ -78,8 +78,9 @@ namespace MetricsAgent.Controllers
             return Ok(repository.GetById(id));
         }
 
-        [HttpGet("timePeriod")]
-        public IActionResult GetByTimePeriod([FromQuery] TimeSpan fromTime, TimeSpan toTime)
+        //[HttpGet("timePeriod")]
+        [HttpGet("from/{fromTime}/to/{toTime}")]
+        public IActionResult GetByTimePeriod([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
         {
             var metrics = repository.GetByTimePeriod(fromTime, toTime);
 
