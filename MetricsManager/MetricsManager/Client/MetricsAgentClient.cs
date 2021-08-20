@@ -81,7 +81,7 @@ namespace MetricsManager.Client
             return null;
         }
 
-        public AllMetricsResponse GetDonNetMetrics(GetAllMetricsRequest request)
+        public AllMetricsResponse GetDotNetMetrics(GetAllMetricsRequest request)
         {
             var fromParameter = request.FromTime.TotalSeconds;
             var toParameter = request.ToTime.TotalSeconds;

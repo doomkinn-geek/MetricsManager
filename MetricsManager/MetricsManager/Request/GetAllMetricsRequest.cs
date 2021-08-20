@@ -6,6 +6,6 @@ namespace MetricsManager.Request
     {
         public string ClientBaseAddress { get; set; }
         public TimeSpan FromTime { get; set; }
-        public TimeSpan ToTime { get; set; }
+        public TimeSpan ToTime { get; set; }        
     }
 }

@@ -14,7 +14,7 @@ namespace MetricsManager.DAL.Repositories
     {
         //private const string ConnectionString = @"Data Source=metrics.db; Version=3;Pooling=True;Max Pool Size=100;";
         public string TableName { get; set;}
-        private IConfiguration Configuration { get; set; }
+        protected IConfiguration Configuration { get; set; }
         private string ConnectionString { get; set; }
 
         public AbstractRepository(string _tablename, IConfiguration _configuration)
@@ -23,7 +23,7 @@ namespace MetricsManager.DAL.Repositories
             this.Configuration = _configuration;
             ConnectionString = Configuration["ConnectionStrings:DefaultConnection"];
         }
-        public void AbstractCreate(Metric item)
+        protected void AbstractCreate(Metric item)
         {
             using (var connection = new SqliteConnection(ConnectionString))
             {
@@ -44,7 +44,7 @@ namespace MetricsManager.DAL.Repositories
             }
         }
 
-        public void AbstractDelete(int id)
+        protected void AbstractDelete(int id)
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
@@ -58,7 +58,7 @@ namespace MetricsManager.DAL.Repositories
             }
         }
 
-        public void AbstractUpdate(Metric item)
+        protected void AbstractUpdate(Metric item)
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
@@ -71,7 +71,7 @@ namespace MetricsManager.DAL.Repositories
             }
         }
 
-        public IList<Metric> AbstractGetAll()
+        protected IList<Metric> AbstractGetAll()
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
@@ -82,7 +82,7 @@ namespace MetricsManager.DAL.Repositories
             }
         }
 
-        public Metric AbstractGetById(int id)
+        protected Metric AbstractGetById(int id)
         {
             try
             {
@@ -99,16 +99,30 @@ namespace MetricsManager.DAL.Repositories
             }
         }
 
-        public IList<Metric> AbstractGetByTimePeriod(TimeSpan fromTime, TimeSpan toTime)
+        protected IList<Metric> AbstractGetByTimePeriod(TimeSpan fromTime, TimeSpan toTime)
         {
             using (var connection = new SQLiteConnection(ConnectionString))
-            {
-                // читаем при помощи Query и в шаблон подставляем тип данных
-                // объект которого Dapper сам и заполнит его поля
-                // в соответсвии с названиями колонок
+            {                
                 return connection.Query<Metric>("SELECT Id, agentId, Time, Value FROM " +
                     TableName +
                     " WHERE Time >= @fromTime AND Time <= toTime").ToList();
+            }
+        }
+
+        public TimeSpan GetMaxRegisteredDate()
+        {
+            try
+            {
+                using (var connection = new SQLiteConnection(ConnectionString))
+                {
+                    string maxDate = connection.Query("SELECT MAX(Time) FROM " +
+                        TableName).ToString();
+                    return new TimeSpan(Convert.ToInt64(maxDate));
+                }
+            }
+            catch(Exception)
+            {
+                return DateTime.UtcNow.TimeOfDay;
             }
         }
     }

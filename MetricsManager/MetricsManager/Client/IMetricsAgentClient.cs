@@ -13,7 +13,7 @@ namespace MetricsManager.Client
 
         AllMetricsResponse GetAllHddMetrics(GetAllMetricsRequest request);
 
-        AllMetricsResponse GetDonNetMetrics(GetAllMetricsRequest request);
+        AllMetricsResponse GetDotNetMetrics(GetAllMetricsRequest request);
 
         AllMetricsResponse GetCpuMetrics(GetAllMetricsRequest request);
 

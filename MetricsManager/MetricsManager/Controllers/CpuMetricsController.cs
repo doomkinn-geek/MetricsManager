@@ -16,8 +16,6 @@ namespace MetricsManager.Controllers
     {
         private readonly ILogger<CpuMetricsController> _logger;
 
-        //private CpuMetricsRepository repository;
-        //private readonly IMapper mapper;
         private IMetricsAgentClient metricsAgentClient;
 
         public CpuMetricsController(ILogger<CpuMetricsController> logger, IMetricsAgentClient _metrcisAgentClient)

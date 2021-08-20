@@ -29,7 +29,7 @@ namespace MetricsManager.Controllers
                 FromTime = fromTime,
                 ToTime = toTime
             };
-            var metrics = metricsAgentClient.GetDonNetMetrics(request);
+            var metrics = metricsAgentClient.GetDotNetMetrics(request);
 
             return Ok(metrics);
         }
