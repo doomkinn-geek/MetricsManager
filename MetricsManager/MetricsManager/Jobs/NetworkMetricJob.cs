@@ -40,6 +40,7 @@ namespace MetricsManager.Jobs
                     Metrics = new List<MetricDto>()
                 };
                 response = _client.GetNetworkMetrics(request);
+                if (response == null) return Task.CompletedTask;
 
                 foreach (var metric in response.Metrics)
                 {

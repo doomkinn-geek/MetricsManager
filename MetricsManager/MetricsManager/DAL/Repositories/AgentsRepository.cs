@@ -22,6 +22,7 @@ namespace MetricsManager.DAL.Repositories
             TableName = "agents";
             this.Configuration = _configuration;
             ConnectionString = Configuration["ConnectionStrings:DefaultConnection"];
+            SqlMapper.AddTypeHandler(new UrlHandler());
         }
         public void Create(AgentMetric item)
         {

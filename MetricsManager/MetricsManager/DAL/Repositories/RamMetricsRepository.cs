@@ -14,8 +14,7 @@ namespace MetricsManager.DAL
     {        
         public RamMetricsRepository(IConfiguration _config) : base("allrammetrics", _config)
         {
-            // добавляем парсилку типа TimeSpan в качестве подсказки для SQLite
-            SqlMapper.AddTypeHandler(new TimeSpanHandler());
+            
         }
         public void Create(Metric item)
         {

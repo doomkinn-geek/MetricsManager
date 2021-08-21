@@ -22,6 +22,8 @@ namespace MetricsManager.DAL.Repositories
             TableName = _tablename;
             this.Configuration = _configuration;
             ConnectionString = Configuration["ConnectionStrings:DefaultConnection"];
+            // добавляем парсилку типа TimeSpan в качестве подсказки для SQLite
+            SqlMapper.AddTypeHandler(new TimeSpanHandler());
         }
         protected void AbstractCreate(Metric item)
         {

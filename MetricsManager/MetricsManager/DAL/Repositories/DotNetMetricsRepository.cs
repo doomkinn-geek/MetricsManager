@@ -17,8 +17,7 @@ namespace MetricsManager.DAL
     {        
         public DotNetMetricsRepository(IConfiguration _config) : base("alldotnetmetrics", _config)
         {
-            // добавляем парсилку типа TimeSpan в качестве подсказки для SQLite
-            SqlMapper.AddTypeHandler(new TimeSpanHandler());
+            
         }
         public void Create(Metric item)
         {

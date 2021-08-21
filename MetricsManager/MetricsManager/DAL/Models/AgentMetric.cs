@@ -10,6 +10,6 @@ namespace MetricsManager.DAL.Models
     {
         public int Id { get; set; }
         public int AgentId { get; set; }
-        public Url AgentUrl { get; set; }
+        public Uri AgentUrl { get; set; }
     }
 }

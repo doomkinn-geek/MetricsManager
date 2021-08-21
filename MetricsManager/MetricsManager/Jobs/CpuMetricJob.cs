@@ -31,7 +31,7 @@ namespace MetricsManager.Jobs
 
         public Task Execute(IJobExecutionContext context)
         {
-            IList<AgentMetric> agentsList = _agentsRepository.GetAll();            
+             IList<AgentMetric> agentsList = _agentsRepository.GetAll();            
             foreach (AgentMetric agent in agentsList)
             {
                 var request = new GetAllMetricsRequest { ClientBaseAddress = agent.AgentUrl.ToString(), FromTime = _repository.GetMaxRegisteredDate(), ToTime = DateTime.UtcNow.TimeOfDay };                                
@@ -40,6 +40,7 @@ namespace MetricsManager.Jobs
                     Metrics = new List<MetricDto>()
                 };
                 response = _client.GetCpuMetrics(request);
+                if (response == null) return Task.CompletedTask;
 
                 foreach (var metric in response.Metrics)
                 {

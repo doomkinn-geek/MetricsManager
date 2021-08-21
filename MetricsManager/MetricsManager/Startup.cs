@@ -2,6 +2,7 @@ using AutoMapper;
 using FluentMigrator.Runner;
 using MetricsManager.Client;
 using MetricsManager.DAL;
+using MetricsManager.DAL.Repositories;
 using MetricsManager.Jobs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,6 +34,7 @@ namespace MetricsManager
             services.AddControllers();
             ConfigureSqlLiteConnection(services);
 
+            services.AddSingleton<AgentsRepository>();
             services.AddSingleton<CpuMetricsRepository>();
             services.AddSingleton<DotNetMetricsRepository>();
             services.AddSingleton<HddMetricsRepository>();
