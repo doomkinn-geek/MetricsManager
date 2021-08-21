@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace MetricsManager.DAL.Models
 {
-    public class AgentMetric
+    public class AgentItem
     {
         public int Id { get; set; }
-        public int AgentId { get; set; }
         public Uri AgentUrl { get; set; }
     }
 }

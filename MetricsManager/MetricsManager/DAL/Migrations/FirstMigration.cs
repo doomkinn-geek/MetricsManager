@@ -12,8 +12,7 @@ namespace MetricsManager.DAL.Migrations
         public override void Up()
         {
             Create.Table("agents")
-                .WithColumn("Id").AsInt64().PrimaryKey().Identity()
-                .WithColumn("agentId").AsInt64().ForeignKey()
+                .WithColumn("Id").AsInt64().PrimaryKey().Identity()                
                 .WithColumn("agentUrl").AsString();
             Create.Table("allcpumetrics")
                 .WithColumn("Id").AsInt64().PrimaryKey().Identity()

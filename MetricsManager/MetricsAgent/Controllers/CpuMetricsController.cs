@@ -12,7 +12,7 @@ using System.Diagnostics;
 
 namespace MetricsAgent.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/")]
     [ApiController]
     public class CpuMetricsController : ControllerBase
     {
@@ -79,10 +79,13 @@ namespace MetricsAgent.Controllers
         }
 
         //[HttpGet("timePeriod")]
-        [HttpGet("from/{fromTime}/to/{toTime}")]
-        public IActionResult GetByTimePeriod([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        [Route("from/{fromTime}/to/{toTime}")]
+        [HttpGet]        
+        public IActionResult GetByTimePeriod(long fromTime, long toTime)
         {
-            var metrics = repository.GetByTimePeriod(fromTime, toTime);
+            TimeSpan fromTimeTS = new TimeSpan(fromTime);
+            TimeSpan toTimeTS = new TimeSpan(toTime);
+            var metrics = repository.GetByTimePeriod(fromTimeTS, toTimeTS);
 
             var response = new AllMetricsResponse()
             {

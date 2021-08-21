@@ -7,7 +7,7 @@ namespace MetricsManager.Response
 {
     public class MetricDto
     {
-        public TimeSpan Time { get; set; }
+        public DateTime Time { get; set; }
         public int Value { get; set; }
         public int Id { get; set; }
     }
