@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using MetricsManager;
 using MetricsManager.Controllers;
-using MetricsManager.Controllers.Requests;
-using MetricsManager.Controllers.Responses;
-using MetricsManager.DAL.Interfaces;
+using MetricsManager.DAL;
 using MetricsManager.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -17,11 +15,11 @@ namespace MetricsManagerTests
     public class NetworkControllerTests
     {
         private readonly NetworkMetricsController _controller;
-        private readonly Mock<INetworkMetricsRepository> _moq;
+        private readonly Mock<NetworkMetricsRepository> _moq;
 
         public NetworkControllerTests()
         {
-            _moq = new Mock<INetworkMetricsRepository>();
+            _moq = new Mock<NetworkMetricsRepository>();
             var logMoq = new Mock<ILogger<NetworkMetricsController>>();
             var mapperConfiguration = new MapperConfiguration(mp => mp.AddProfile(new MapperProfile()));
             var mapper = mapperConfiguration.CreateMapper();
@@ -33,29 +31,26 @@ namespace MetricsManagerTests
         {
             //Arrange
             _moq.Setup(repo => repo.GetByTimePeriod(
-                It.IsAny<DateTimeOffset>(),
-                It.IsAny<DateTimeOffset>(),
-                It.IsAny<int>()))
-                .Returns(new List<NetworkMetric>()
+                It.IsAny<int>(),
+                It.IsAny<long>(),
+                It.IsAny<long>()))
+                .Returns(new List<Metric>()
                 {
-                    new NetworkMetric()
+                    new Metric()
                     {
-                        Time = 1000,
+                        Time = new TimeSpan(1000),
                         Value = 2,
                         Id = 1,
                         AgentId = 1
                     }
                 }).Verifiable();
             var agentId = 1;
-            var fromTime = DateTimeOffset.FromUnixTimeSeconds(0);
-            var toTime = DateTimeOffset.FromUnixTimeSeconds(100);
-            var request = new NetworkMetricFromAgentRequests(agentId, fromTime, toTime);
-
+            var fromTime = 0;
+            var toTime = 100;
             //Act
-            var result = _controller.GetMetricsFromAgent(request);
-
-            // Assert
-            _ = Assert.IsAssignableFrom<NetworkGetMetricsFromAgentResponse>(result);
+            var result = _controller.GetMetricsFromAgent(agentId, fromTime, toTime);
+            //Assert
+            _ = Assert.IsAssignableFrom<IActionResult>(result);
         }
 
         [Fact]
@@ -63,26 +58,25 @@ namespace MetricsManagerTests
         {
             //Arrange
             _moq.Setup(repo => repo.GetByTimePeriod(
-                It.IsAny<DateTimeOffset>(),
-                It.IsAny<DateTimeOffset>()))
-                .Returns(new List<NetworkMetric>()
+                It.IsAny<long>(),
+                It.IsAny<long>()))
+                .Returns(new List<Metric>()
                 {
-                    new NetworkMetric()
+                    new Metric()
                     {
-                        Time = 1000,
+                        Time = new TimeSpan(1000),
                         Value = 2,
                         Id = 1,
                     }
                 }).Verifiable();
-            var fromTime = DateTimeOffset.FromUnixTimeSeconds(0);
-            var toTime = DateTimeOffset.FromUnixTimeSeconds(100);
-            var request = new NetworkMetricFromClusterRequests(fromTime, toTime);
+            var fromTime = 0;
+            var toTime = 100;
 
             //Act
-            var result = _controller.GetMetricsFromAllCluster(request);
+            var result = _controller.GetMetricsFromAllCluster(fromTime, toTime);
 
             // Assert
-            _ = Assert.IsAssignableFrom<NetworkGetMetricsFromClusterResponse>(result);
+            _ = Assert.IsAssignableFrom<IActionResult>(result);
         }
     }
 }

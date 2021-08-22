@@ -6,6 +6,7 @@ using MetricsManager.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 
@@ -32,16 +33,36 @@ namespace MetricsManager.Controllers
         public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] long fromTime, [FromRoute] long toTime)
         {
             _logger.LogInformation("GetMetricsFromAgent: agentId = {0}, fromTime = {1}, toTime = {2}", agentId, fromTime, toTime);
-            var result = _repository.GetByTimePeriod(agentId, fromTime, toTime);
+            var queryResult = _repository.GetByTimePeriod(agentId, fromTime, toTime);
 
-            return Ok(result);
+            var response = new AllMetricsResponse()
+            {
+                Metrics = new List<MetricDto>()
+            };
+
+            foreach (var metric in queryResult)
+            {
+                response.Metrics.Add(_mapper.Map<MetricDto>(metric));
+            }
+            return Ok(response);
         }
 
         [HttpGet("cluster/from/{fromTime}/to/{toTime}")]
         public IActionResult GetMetricsFromAllCluster([FromRoute] long fromTime, [FromRoute] long toTime)
         {
             _logger.LogInformation("GetMetricsFromAllCluster: fromTime = {1}, toTime = {2}", fromTime, toTime);
-            return Ok();
+            var queryResult = _repository.GetByTimePeriod(fromTime, toTime);
+
+            var response = new AllMetricsResponse()
+            {
+                Metrics = new List<MetricDto>()
+            };
+
+            foreach (var metric in queryResult)
+            {
+                response.Metrics.Add(_mapper.Map<MetricDto>(metric));
+            }
+            return Ok(response);
         }
     }
 

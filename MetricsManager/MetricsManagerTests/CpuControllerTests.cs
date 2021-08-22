@@ -2,10 +2,14 @@
 using MetricsManager;
 using MetricsManager.Controllers;
 using MetricsManager.DAL;
+using MetricsManager.DAL.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Xunit;
 
 namespace MetricsManagerTests
@@ -17,7 +21,10 @@ namespace MetricsManagerTests
 
         public CpuControllerTests()
         {
-            _moq = new Mock<CpuMetricsRepository>();
+            IConfiguration configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json").Build();
+            _moq = new Mock<CpuMetricsRepository>(configuration);
             var logMoq = new Mock<ILogger<CpuMetricsController>>();
             var mapperConfiguration = new MapperConfiguration(mp => mp.AddProfile(new MapperProfile()));
             var mapper = mapperConfiguration.CreateMapper();
@@ -29,29 +36,26 @@ namespace MetricsManagerTests
         {
             //Arrange
             _moq.Setup(repo => repo.GetByTimePeriod(
-                It.IsAny<DateTimeOffset>(), 
-                It.IsAny<DateTimeOffset>(), 
-                It.IsAny<int>()))
-                .Returns(new List<CpuMetric>()
+                It.IsAny<int>(), 
+                It.IsAny<long>(), 
+                It.IsAny<long>()))
+                .Returns(new List<Metric>()
                 {
-                    new CpuMetric()
+                    new Metric()
                     {
-                        Time = 1000,
+                        Time = new TimeSpan(1000),
                         Value = 2,
                         Id = 1,
                         AgentId = 1
                     }
                 }).Verifiable();
             var agentId = 1;
-            var fromTime = DateTimeOffset.FromUnixTimeSeconds(0);
-            var toTime = DateTimeOffset.FromUnixTimeSeconds(100);
-            var request = new CpuMetricFromAgentRequests(agentId, fromTime, toTime);
-
+            var fromTime = 0;
+            var toTime = 100;           
             //Act
-            var result = _controller.GetMetricsFromAgent(request);               
-
-            // Assert
-            _ = Assert.IsAssignableFrom<CpuGetMetricsFromAgentResponse>(result);
+            var result = _controller.GetMetricsFromAgent(agentId, fromTime, toTime);      
+            //Assert
+            _ = Assert.IsAssignableFrom<IActionResult>(result);
         }
 
         [Fact]
@@ -59,26 +63,25 @@ namespace MetricsManagerTests
         {
             //Arrange
             _moq.Setup(repo => repo.GetByTimePeriod(
-                It.IsAny<DateTimeOffset>(),
-                It.IsAny<DateTimeOffset>()))
-                .Returns(new List<CpuMetric>()
+                It.IsAny<long>(),
+                It.IsAny<long>()))
+                .Returns(new List<Metric>()
                 {
-                    new CpuMetric()
+                    new Metric()
                     {
-                        Time = 1000,
+                        Time = new TimeSpan(1000),
                         Value = 2,
                         Id = 1,
                     }
                 }).Verifiable();
-            var fromTime = DateTimeOffset.FromUnixTimeSeconds(0);
-            var toTime = DateTimeOffset.FromUnixTimeSeconds(100);
-            var request = new CpuMetricFromClusterRequests(fromTime, toTime);
-
+            var fromTime = 0;
+            var toTime = 100;
+           
             //Act
-            var result = _controller.GetMetricsFromAllCluster(request);
+            var result = _controller.GetMetricsFromAllCluster(fromTime, toTime);
 
             // Assert
-            _ = Assert.IsAssignableFrom<CpuGetMetricsFromClusterResponse>(result);
+            _ = Assert.IsAssignableFrom<IActionResult>(result);
         }
     }
 }

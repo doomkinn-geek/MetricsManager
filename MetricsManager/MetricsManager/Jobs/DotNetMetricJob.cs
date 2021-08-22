@@ -37,7 +37,8 @@ namespace MetricsManager.Jobs
             {
                 var request = new GetAllMetricsRequest { ClientBaseAddress = agent.AgentUrl.ToString(), 
                     FromTime = _repository.GetMaxRegisteredDate(agent.Id), 
-                    ToTime = DateTime.UtcNow.TimeOfDay };
+                    ToTime = new TimeSpan(DateTime.UtcNow.Ticks)
+                };
                 var response = new AllMetricsResponse()
                 {
                     Metrics = new List<MetricDto>()
@@ -51,7 +52,7 @@ namespace MetricsManager.Jobs
                     _repository.Create(new Metric
                     {
                         AgentId = agent.Id,
-                        Time = metric.Time.TimeOfDay,
+                        Time = new TimeSpan(metric.Time.Ticks),
                         Value = metric.Value
                     });
                 }

@@ -47,6 +47,10 @@ namespace MetricsManager.DAL
         {
             return AbstractGetByTimePeriod(agentId, fromTime, toTime);
         }
+        public IList<Metric> GetByTimePeriod(long fromTime, long toTime)
+        {
+            return AbstractGetByTimePeriod(fromTime, toTime);
+        }
     }
 
 }

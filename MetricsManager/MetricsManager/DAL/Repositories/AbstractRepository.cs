@@ -113,6 +113,21 @@ namespace MetricsManager.DAL.Repositories
             }
         }
 
+        protected IList<Metric> AbstractGetByTimePeriod(long fromTime, long toTime)
+        {
+            using (var connection = new SQLiteConnection(ConnectionString))
+            {
+                return connection.Query<Metric>("SELECT Id, agentId, Time, Value FROM " +
+                    TableName +
+                    " WHERE Time >= @fromTime AND Time <= @toTime",
+                    new
+                    {
+                        fromTime = fromTime,
+                        toTime = toTime
+                    }).ToList();
+            }
+        }
+
         public TimeSpan GetMaxRegisteredDate(int agentId)
         {
             try
