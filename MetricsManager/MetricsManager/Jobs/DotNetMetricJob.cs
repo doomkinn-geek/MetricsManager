@@ -36,7 +36,7 @@ namespace MetricsManager.Jobs
             foreach (AgentItem agent in agentsList)
             {
                 var request = new GetAllMetricsRequest { ClientBaseAddress = agent.AgentUrl.ToString(), 
-                    FromTime = _repository.GetMaxRegisteredDate(), 
+                    FromTime = _repository.GetMaxRegisteredDate(agent.Id), 
                     ToTime = DateTime.UtcNow.TimeOfDay };
                 var response = new AllMetricsResponse()
                 {

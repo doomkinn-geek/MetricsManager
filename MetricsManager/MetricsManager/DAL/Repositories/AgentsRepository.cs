@@ -73,7 +73,7 @@ namespace MetricsManager.DAL.Repositories
                         new { id = id });
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new AgentItem { Id = 0 };
             }

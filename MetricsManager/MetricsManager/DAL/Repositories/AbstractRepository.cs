@@ -91,39 +91,51 @@ namespace MetricsManager.DAL.Repositories
                         new { id = id });
                 }
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 return new Metric { Id = 0 };
             }
         }
 
-        protected IList<Metric> AbstractGetByTimePeriod(TimeSpan fromTime, TimeSpan toTime)
+        protected IList<Metric> AbstractGetByTimePeriod(int agentId, long fromTime, long toTime)
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {                
                 return connection.Query<Metric>("SELECT Id, agentId, Time, Value FROM " +
                     TableName +
-                    " WHERE Time >= @fromTime AND Time <= toTime").ToList();
+                    " WHERE Time >= @fromTime AND Time <= @toTime AND agentId = @agentId", 
+                    new
+                    {
+                        fromTime = fromTime,
+                        toTime = toTime,
+                        agentId = agentId
+                    }).ToList();
             }
         }
 
-        public TimeSpan GetMaxRegisteredDate()
+        public TimeSpan GetMaxRegisteredDate(int agentId)
         {
             try
             {
                 using (var connection = new SQLiteConnection(ConnectionString))
                 {
-                    Dictionary<string, object> queryResult = new Dictionary<string, object>();
+                    /*Dictionary<string, object> queryResult = new Dictionary<string, object>();
                     IList<MaxMetrix> result = connection.Query<MaxMetrix>("SELECT MAX(Time) AS [Max] FROM " +
                         TableName).ToList();
                     MaxMetrix maxValue = result[0];
                     if(maxValue.Max != null)
                         return maxValue.Max;
                     else
-                        return DateTime.UtcNow.TimeOfDay;
+                        return DateTime.UtcNow.TimeOfDay;*/
+                    var result = connection.ExecuteScalar<long>(
+                        $"SELECT MAX(Time) FROM "+
+                        TableName +
+                        " WHERE agentId = @agentId",
+                        new { agentId });
+                    return new TimeSpan(result);
                 }
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 return DateTime.UtcNow.TimeOfDay;
             }

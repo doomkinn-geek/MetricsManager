@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MetricsManager.Client;
+using MetricsManager.DAL;
 using MetricsManager.Request;
 using MetricsManager.Response;
 using Microsoft.AspNetCore.Mvc;
@@ -15,33 +16,29 @@ namespace MetricsManager.Controllers
     public class CpuMetricsController : ControllerBase
     {
         private readonly ILogger<CpuMetricsController> _logger;
+        private readonly CpuMetricsRepository _repository;
+        private readonly IMapper _mapper;
 
-        private IMetricsAgentClient metricsAgentClient;
-
-        public CpuMetricsController(ILogger<CpuMetricsController> logger, IMetricsAgentClient _metrcisAgentClient)
+        public CpuMetricsController(CpuMetricsRepository repository, ILogger<CpuMetricsController> logger, IMapper mapper)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в CpuMetricsController");
-            metricsAgentClient = _metrcisAgentClient;
+            _repository = repository;
+            _mapper = mapper;
         }
 
 
         [HttpGet("agent/{agentId}/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] long fromTime, [FromRoute] long toTime)
         {
-            _logger.LogInformation("GetMetricsFromAgent: agentId = {0}, fromTime = {1}, toTime = {2}", agentId, fromTime, toTime);            
-            var request = new GetAllMetricsRequest
-            {
-                FromTime = fromTime,
-                ToTime = toTime
-            };
-            var metrics = metricsAgentClient.GetCpuMetrics(request);
+            _logger.LogInformation("GetMetricsFromAgent: agentId = {0}, fromTime = {1}, toTime = {2}", agentId, fromTime, toTime);
+            var result = _repository.GetByTimePeriod(agentId, fromTime, toTime);
 
-            return Ok(metrics);
+            return Ok(result);
         }
 
         [HttpGet("cluster/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAllCluster([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        public IActionResult GetMetricsFromAllCluster([FromRoute] long fromTime, [FromRoute] long toTime)
         {
             _logger.LogInformation("GetMetricsFromAllCluster: fromTime = {1}, toTime = {2}", fromTime, toTime);
             return Ok();

@@ -87,7 +87,7 @@ namespace MetricsAgent.DAL.Repositories
                         new { id = id });
                 }
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 return new Metric { Id = 0 };
             }

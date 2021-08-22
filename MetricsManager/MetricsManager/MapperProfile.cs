@@ -28,6 +28,7 @@ namespace MetricsManager
                 new Uri(sourceMember.Uri)));
             CreateMap<Uri, string>().ConvertUsing<UriStringConverter>();
             CreateMap<string, Uri>().ConvertUsing<StringUriConverter>();
+            CreateMap<long, TimeSpan>().ConvertUsing<TimeSpanConverter>();
         }
         private class UriStringConverter : ITypeConverter<Uri, string>
         {
@@ -43,6 +44,14 @@ namespace MetricsManager
             public Uri Convert(string source, Uri destination, ResolutionContext context)
             {
                 return new Uri(source);
+            }
+        }
+
+        private class TimeSpanConverter : ITypeConverter<long, TimeSpan>
+        {
+            public TimeSpan Convert(long source, TimeSpan destination, ResolutionContext context)
+            {
+                return new TimeSpan(source);
             }
         }
     }   
