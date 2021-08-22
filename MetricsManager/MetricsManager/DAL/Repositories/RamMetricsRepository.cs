@@ -2,7 +2,6 @@
 using Dapper;
 using MetricsManager.DAL.Models;
 using MetricsManager.DAL.Repositories;
-using MetricsManager.DAL.Repositories;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -41,7 +40,12 @@ namespace MetricsManager.DAL
             return AbstractGetById(id);
         }
 
-        public IList<Metric> GetByTimePeriod(TimeSpan fromTime, TimeSpan toTime)
+        public IList<Metric> GetByTimePeriod(int agentId, long fromTime, long toTime)
+        {
+            return AbstractGetByTimePeriod(agentId, fromTime, toTime);
+        }
+
+        public IList<Metric> GetByTimePeriod(long fromTime, long toTime)
         {
             return AbstractGetByTimePeriod(fromTime, toTime);
         }

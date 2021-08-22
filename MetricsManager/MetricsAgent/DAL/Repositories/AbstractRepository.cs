@@ -87,7 +87,7 @@ namespace MetricsAgent.DAL.Repositories
                         new { id = id });
                 }
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 return new Metric { Id = 0 };
             }
@@ -102,7 +102,11 @@ namespace MetricsAgent.DAL.Repositories
                 // в соответсвии с названиями колонок
                 return connection.Query<Metric>("SELECT Id, Time, Value FROM " +
                     TableName +
-                    " WHERE Time >= @fromTime AND Time <= toTime").ToList();
+                    " WHERE Time >= @from AND Time <= @to", new
+                    {
+                        from = fromTime.Ticks,
+                        to = toTime.Ticks
+                    }).ToList();
             }
         }
     }

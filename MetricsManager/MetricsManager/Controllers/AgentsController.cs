@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using MetricsManager.DAL.Models;
+using MetricsManager.DAL.Repositories;
+using MetricsManager.Request;
+using MetricsManager.Response;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,16 +18,22 @@ namespace MetricsManager.Controllers
     public class AgentsController : ControllerBase
     {
         private readonly ILogger<AgentsController> _logger;
-        public AgentsController(ILogger<AgentsController> logger)
+        private readonly AgentsRepository _repository;
+        private readonly IMapper _mapper;
+        public AgentsController(ILogger<AgentsController> logger, AgentsRepository repository, IMapper mapper)
         {
             _logger = logger;
+            _repository = repository;            
+            _mapper = mapper;
             _logger.LogDebug(1, "NLog встроен в AgentsController");
         }
-
+        
         [HttpPost("register")]
-        public IActionResult RegisterAgent([FromBody] AgentInfo agentInfo)
+        public IActionResult RegisterAgent([FromBody] AgentRequest agentRequest)
         {
-            _logger.LogInformation("RegisterAgent: agentInfo = {0}", agentInfo);
+            _logger.LogInformation("RegisterAgent: agentInfo = {0}", agentRequest);
+            _repository.Create(_mapper.Map<AgentItem>(agentRequest));
+            _logger.LogInformation("Agent successfully added to database");
             return Ok();
         }
 
@@ -43,15 +54,17 @@ namespace MetricsManager.Controllers
         [HttpGet("list")]
         public IActionResult GetAgentsList()
         {
-            _logger.LogInformation("GetAgentsList");
-            return Ok();
+            var agents = _repository.GetAll();
+            var response = new AllAgentsResponse()
+            {
+                Agents = new List<AgentResponse>()
+            };
+
+            foreach (var agent in agents)
+            {
+                response.Agents.Add(_mapper.Map<AgentResponse>(agent));
+            }
+            return Ok(response);
         }
-
-        /*[Route("agent/{agentId}/from/{fromTime}/to/{toTime}")]
-        [HttpGet]
-        public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
-        {
-
-        }*/
     }    
 }

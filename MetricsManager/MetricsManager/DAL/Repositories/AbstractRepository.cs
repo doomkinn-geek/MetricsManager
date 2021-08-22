@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using MetricsManager.DAL.Models;
-using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -27,7 +26,7 @@ namespace MetricsManager.DAL.Repositories
         }
         protected void AbstractCreate(Metric item)
         {
-            using (var connection = new SqliteConnection(ConnectionString))
+            using (var connection = new SQLiteConnection(ConnectionString))
             {
                 //  запрос на вставку данных с плейсхолдерами для параметров
                 connection.Execute("INSERT INTO " +
@@ -36,11 +35,8 @@ namespace MetricsManager.DAL.Repositories
                     // анонимный объект с параметрами запроса
                     new
                     {
-                        // value подставится на место "@value" в строке запроса
-                        // значение запишется из поля Value объекта item
-                        value = item.Value,
-
-                        // записываем в поле time количество секунд
+                        agentId = item.AgentId,
+                        value = item.Value,                        
                         time = item.Time.TotalSeconds
                     });
             }
@@ -95,31 +91,63 @@ namespace MetricsManager.DAL.Repositories
                         new { id = id });
                 }
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 return new Metric { Id = 0 };
             }
         }
 
-        protected IList<Metric> AbstractGetByTimePeriod(TimeSpan fromTime, TimeSpan toTime)
+        protected IList<Metric> AbstractGetByTimePeriod(int agentId, long fromTime, long toTime)
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {                
                 return connection.Query<Metric>("SELECT Id, agentId, Time, Value FROM " +
                     TableName +
-                    " WHERE Time >= @fromTime AND Time <= toTime").ToList();
+                    " WHERE Time >= @fromTime AND Time <= @toTime AND agentId = @agentId", 
+                    new
+                    {
+                        fromTime = fromTime,
+                        toTime = toTime,
+                        agentId = agentId
+                    }).ToList();
             }
         }
 
-        public TimeSpan GetMaxRegisteredDate()
+        protected IList<Metric> AbstractGetByTimePeriod(long fromTime, long toTime)
+        {
+            using (var connection = new SQLiteConnection(ConnectionString))
+            {
+                return connection.Query<Metric>("SELECT Id, agentId, Time, Value FROM " +
+                    TableName +
+                    " WHERE Time >= @fromTime AND Time <= @toTime",
+                    new
+                    {
+                        fromTime = fromTime,
+                        toTime = toTime
+                    }).ToList();
+            }
+        }
+
+        public TimeSpan GetMaxRegisteredDate(int agentId)
         {
             try
             {
                 using (var connection = new SQLiteConnection(ConnectionString))
                 {
-                    string maxDate = connection.Query("SELECT MAX(Time) FROM " +
-                        TableName).ToString();
-                    return new TimeSpan(Convert.ToInt64(maxDate));
+                    /*Dictionary<string, object> queryResult = new Dictionary<string, object>();
+                    IList<MaxMetrix> result = connection.Query<MaxMetrix>("SELECT MAX(Time) AS [Max] FROM " +
+                        TableName).ToList();
+                    MaxMetrix maxValue = result[0];
+                    if(maxValue.Max != null)
+                        return maxValue.Max;
+                    else
+                        return DateTime.UtcNow.TimeOfDay;*/
+                    var result = connection.ExecuteScalar<long>(
+                        $"SELECT MAX(Time) FROM "+
+                        TableName +
+                        " WHERE agentId = @agentId",
+                        new { agentId });
+                    return new TimeSpan(result);
                 }
             }
             catch(Exception)

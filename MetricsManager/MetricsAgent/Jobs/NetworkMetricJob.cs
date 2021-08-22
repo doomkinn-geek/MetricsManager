@@ -32,7 +32,8 @@ namespace MetricsAgent.Jobs
             var value = Convert.ToInt32(_netCounter.NextValue());
 
             // узнаем когда мы сняли значение метрики.
-            var time = TimeSpan.FromSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            //var time = TimeSpan.FromSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            TimeSpan time = new TimeSpan(DateTimeOffset.UtcNow.Ticks);
 
             // теперь можно записать что-то при помощи репозитория
 

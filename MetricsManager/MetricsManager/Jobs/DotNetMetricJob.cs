@@ -32,20 +32,29 @@ namespace MetricsManager.Jobs
 
         public Task Execute(IJobExecutionContext context)
         {
-            IList<AgentMetric> agentsList = _agentsRepository.GetAll();
-            foreach (AgentMetric agent in agentsList)
+            IList<AgentItem> agentsList = _agentsRepository.GetAll();
+            foreach (AgentItem agent in agentsList)
             {
-                var request = new GetAllMetricsRequest { ClientBaseAddress = agent.AgentUrl.ToString(), FromTime = _repository.GetMaxRegisteredDate(), ToTime = DateTime.UtcNow.TimeOfDay };
+                var request = new GetAllMetricsRequest { ClientBaseAddress = agent.AgentUrl.ToString(), 
+                    FromTime = _repository.GetMaxRegisteredDate(agent.Id), 
+                    ToTime = new TimeSpan(DateTime.UtcNow.Ticks)
+                };
                 var response = new AllMetricsResponse()
                 {
                     Metrics = new List<MetricDto>()
                 };
                 response = _client.GetDotNetMetrics(request);
                 if (response == null) return Task.CompletedTask;
+                if (response.Metrics == null) return Task.CompletedTask;
 
                 foreach (var metric in response.Metrics)
                 {
-                    _repository.Create(_mapper.Map<Metric>(metric));
+                    _repository.Create(new Metric
+                    {
+                        AgentId = agent.Id,
+                        Time = new TimeSpan(metric.Time.Ticks),
+                        Value = metric.Value
+                    });
                 }
             }
 

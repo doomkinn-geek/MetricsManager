@@ -1,7 +1,6 @@
 ﻿using Core;
 using Dapper;
 using MetricsManager.DAL.Models;
-using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -11,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MetricsManager.DAL.Repositories
 {
-    public class AgentsRepository : IRepository<AgentMetric>
+    public class AgentsRepository : IRepository<AgentItem>
     {
         private string TableName { get; set; }
         private IConfiguration Configuration { get; set; }
@@ -24,17 +23,15 @@ namespace MetricsManager.DAL.Repositories
             ConnectionString = Configuration["ConnectionStrings:DefaultConnection"];
             SqlMapper.AddTypeHandler(new UrlHandler());
         }
-        public void Create(AgentMetric item)
+        public void Create(AgentItem item)
         {
-            using (var connection = new SqliteConnection(ConnectionString))
+            using (var connection = new SQLiteConnection(ConnectionString))
             {                
                 connection.Execute("INSERT INTO " +
                     TableName +
-                    " (Id, agentId, agentUrl) VALUES(@Id, @agentId, @agentUrl)",                    
+                    " (agentUrl) VALUES(@agentUrl)",                    
                     new
-                    {
-                        Id = item.Id,
-                        agentId = item.AgentId,
+                    {                        
                         agentUrl = item.AgentUrl
                     });
             }
@@ -54,42 +51,41 @@ namespace MetricsManager.DAL.Repositories
             }
         }
 
-        public IList<AgentMetric> GetAll()
+        public IList<AgentItem> GetAll()
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
                 // читаем при помощи Query и в шаблон подставляем тип данных
                 // объект которого Dapper сам и заполнит его поля
                 // в соответсвии с названиями колонок
-                return connection.Query<AgentMetric>("SELECT Id, agentId, agentUrl FROM " + TableName).ToList();
+                return connection.Query<AgentItem>("SELECT Id, agentUrl FROM " + TableName).ToList();
             }
         }
 
-        public AgentMetric GetById(int id)
+        public AgentItem GetById(int id)
         {
             try
             {
                 using (var connection = new SQLiteConnection(ConnectionString))
                 {
-                    return connection.QuerySingle<AgentMetric>("SELECT Id, agentId, agentUrl FROM " +
+                    return connection.QuerySingle<AgentItem>("SELECT Id, agentUrl FROM " +
                         TableName + " WHERE id=@id",
                         new { id = id });
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return new AgentMetric { Id = 0 };
+                return new AgentItem { Id = 0 };
             }
         }
 
-        public void Update(AgentMetric item)
+        public void Update(AgentItem item)
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
-                connection.Execute("UPDATE " + TableName + " SET Id = @Id, agentId = @agentId, agentUrl = @value WHERE id=@id", new
+                connection.Execute("UPDATE " + TableName + " SET Id = @Id, agentUrl = @value WHERE id=@id", new
                 {
-                    Id = item.Id,
-                    agentId = item.AgentId,
+                    Id = item.Id,                    
                     agentUrl = item.AgentUrl
                 });
             }
