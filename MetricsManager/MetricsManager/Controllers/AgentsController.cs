@@ -27,7 +27,13 @@ namespace MetricsManager.Controllers
             _mapper = mapper;
             _logger.LogDebug(1, "NLog встроен в AgentsController");
         }
-        
+
+        /// <summary>
+        /// Регистрация нового агента сбора метрик
+        /// </summary>
+        /// <param name="agentRequest">Содержит Uri агента</param>
+        /// <response code="201">Если все хорошо</response>
+        /// <response code="400">Eсли передали не правильные параметры</response>
         [HttpPost("register")]
         public IActionResult RegisterAgent([FromBody] AgentRequest agentRequest)
         {
@@ -37,6 +43,10 @@ namespace MetricsManager.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Активация агента по его Id (не реализовано)
+        /// </summary>
+        /// <param name="agentId"></param>
         [HttpPut("enable/{agentId}")]
         public IActionResult EnableAgentById([FromRoute] int agentId)
         {
@@ -44,6 +54,10 @@ namespace MetricsManager.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Деактивация агента по его Id (не реализовано)
+        /// </summary>
+        /// <param name="agentId"></param>
         [HttpPut("disable/{agentId}")]
         public IActionResult DisableAgentById([FromRoute] int agentId)
         {
@@ -51,6 +65,9 @@ namespace MetricsManager.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Получение всех зарегистрированных агентов
+        /// </summary>
         [HttpGet("list")]
         public IActionResult GetAgentsList()
         {
