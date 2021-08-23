@@ -25,6 +25,13 @@ namespace MetricsManager.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Получает метрики HDD на заданном диапазоне времени по Id агента
+        /// </summary>
+        /// <param name="agentId">Id агента</param>
+        /// <param name="fromTime">Время начала выборки (TimeSpan.Ticks (long)) </param>
+        /// <param name="toTime">Время конца выборки (TimeSpan.Ticks (long))</param>
+        /// <returns>Список метрик с одного агента</returns>
         [HttpGet("agent/{agentId}/from/{fromTime}/to/{toTime}")]
         public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] long fromTime, [FromRoute] long toTime)
         {
@@ -43,6 +50,12 @@ namespace MetricsManager.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Получает метрики HDD на заданном диапазоне времени со всех агентов
+        /// </summary>
+        /// <param name="fromTime">Время начала выборки (TimeSpan.Ticks (long)) </param>
+        /// <param name="toTime">Время конца выборки (TimeSpan.Ticks (long))</param>
+        /// <returns>Список метрик со всех агентов</returns>
         [HttpGet("cluster/from/{fromTime}/to/{toTime}")]
         public IActionResult GetMetricsFromAllCluster([FromRoute] long fromTime, [FromRoute] long toTime)
         {

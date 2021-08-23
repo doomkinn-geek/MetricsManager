@@ -54,6 +54,12 @@ namespace MetricsAgent.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Получает метрики CPU записанные за все время наблюдений
+        /// </summary>        
+        /// <returns>Список метрик</returns>
+        /// <response code="201">Если все хорошо</response>
+        /// <response code="400">Eсли передали не правильные параметры</response>
         [HttpGet("all")]
         public IActionResult GetAll()
         {
@@ -78,7 +84,14 @@ namespace MetricsAgent.Controllers
             return Ok(repository.GetById(id));
         }
 
-        //[HttpGet("timePeriod")]
+        /// <summary>
+        /// Получает метрики CPU на заданном диапазоне времени
+        /// </summary>
+        /// <param name="fromTime">TimeSpan начала выборки (тип long)</param>
+        /// <param name="toTime">TimeSpan конца выборки (тип long)</param>
+        /// <returns>Список метрик</returns>
+        /// <response code="201">Если все хорошо</response>
+        /// <response code="400">Eсли передали не правильные параметры</response>
         [Route("from/{fromTime}/to/{toTime}")]
         [HttpGet]        
         public IActionResult GetByTimePeriod(long fromTime, long toTime)

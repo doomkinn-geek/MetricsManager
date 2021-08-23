@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using NLog;
 using Polly;
 using Quartz;
@@ -16,6 +17,8 @@ using Quartz.Impl;
 using Quartz.Spi;
 using System;
 using System.Data.SQLite;
+using System.IO;
+using System.Reflection;
 
 namespace MetricsManager
 {
@@ -90,6 +93,33 @@ namespace MetricsManager
                 cronExpression: "0/5 * * * * ?"));
 
             services.AddHostedService<QuartzHostedService>();
+
+            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "API сервиса агента сбора метрик",
+                    Description = "“ут можно поиграть с api нашего сервиса",
+                    TermsOfService = new Uri("https://example.com/terms"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "doomkinn",
+                        Email = "doomkinn@yandex.ru",
+                        Url = new Uri("https://github.com/doomkinn-geek"),
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "можно указать под какой лицензией все опубликовано",
+                        Url = new Uri("https://example.com/license"),
+                    }
+                });
+                // ”казываем файл из которого брать комментарии дл€ Swagger UI
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
         }
 
         private void ConfigureSqlLiteConnection(IServiceCollection services)
@@ -130,6 +160,16 @@ namespace MetricsManager
             {
                 ;
             }
+            // ¬ключение middleware в пайплайн дл€ обработки Swagger запросов.
+            app.UseSwagger();
+            // включение middleware дл€ генерации swagger-ui 
+            // указываем Swagger JSON эндпоинт (куда обращатьс€ за сгенерированной спецификацией
+            // по которой будет построен UI).
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API сервиса агента сбора метрик");
+                c.RoutePrefix = string.Empty;
+            });
         }
     }
 }
