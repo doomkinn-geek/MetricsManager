@@ -1,7 +1,7 @@
-﻿<Application x:Class="MetricManagerClient.App"
+﻿<Application x:Class="MetricsManagerClient.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:MetricManagerClient"
+             xmlns:local="clr-namespace:MetricsManagerClient"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          

@@ -16,14 +16,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MetricManagerClient
+namespace MetricsManagerClient
 {
     /// <summary>
     /// Логика взаимодействия для MaterialCards.xaml
     /// </summary>
-    public partial class MaterialCards : UserControl, INotifyPropertyChanged
+    public partial class CPUDiagram : UserControl, INotifyPropertyChanged
     {
-        public MaterialCards()
+        public CPUDiagram()
         {
             InitializeComponent();
             ColumnSeriesValues = new SeriesCollection
@@ -54,4 +54,4 @@ namespace MetricManagerClient
 
     }
 }
-}
+

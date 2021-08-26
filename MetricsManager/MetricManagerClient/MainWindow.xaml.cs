@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MetricManagerClient
+namespace MetricsManagerClient
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
@@ -23,11 +24,12 @@ namespace MetricManagerClient
         public MainWindow()
         {
             InitializeComponent();
+            string managerUrl = ConfigurationManager.AppSettings["metricsManagerURL"];
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            CpuChart.ColumnServiesValues[0].Values.Add(48d);
+            CpuChart.ColumnSeriesValues[0].Values.Add(48d);
         }
     }
 }
